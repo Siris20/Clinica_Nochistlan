@@ -32,8 +32,10 @@ services:
     environment:
       - MARIADB_HOST=mariadb
       - MARIADB_PORT=3306
-      - CORS_ORIGINS=["http://localhost", "http://localhost:80"]
+      - BACKEND_CORS_ORIGINS=["http://localhost:5173", "http://localhost", "http://localhost:80"] # <-- CORREGIDO AQUÍ
+      - WATCHFILES_FORCE_POLLING=true
     volumes:
+      - ./tadimex-backend:/app
       - backend_data:/app/data
       - backend_static:/app/static
     ports:
@@ -45,14 +47,21 @@ services:
         condition: service_healthy
 
   frontend:
-    build: ./tadimex-frontend
-    image: tadimex-frontend:latest
+    build:
+      context: ./tadimex-frontend
+      target: dev # <-- Apunta a la fase de desarrollo en vivo de tu Dockerfile
+    image: tadimex-frontend:dev
     container_name: tadimex-frontend
     restart: always
     environment:
-      - VITE_API_SERVER=http://tadimex-backend:8000
+      - VITE_API_SERVER=http://localhost:8000
+      - CHOKIDAR_USEPOLLING=true 
+      - WATCHPACK_POLLING=true
     volumes: 
-      - frontend_build:/usr/share/nginx/html
+      - ./tadimex-frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173" # <-- Mapea el puerto del servidor de desarrollo de Vite
     networks:
       - tadimex-network
     depends_on:

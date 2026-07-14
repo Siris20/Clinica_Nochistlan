@@ -58,7 +58,7 @@ function About() {
             px: { xs: 2, sm: 0 }
           }}
         >
-          Tadimex Prueba de que docker actualiza automaticamente al hacer cambios en local y prueba para ver si entendi los branches
+          Tadimex cambios automaticamente taquitos de pepena
         </Typography>
         
         {/* Decorative elements */}
