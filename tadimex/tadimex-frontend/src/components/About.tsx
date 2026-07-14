@@ -58,11 +58,7 @@ function About() {
             px: { xs: 2, sm: 0 }
           }}
         >
-          Tadimex "Transformación Digital México", es una empresa que se
-          encarga de gestionar las actividades de marketing de sus clientes, con
-          el objetivo de lograr los siguientes resultados: Atraer consumidores,
-          Incrementar las ventas, Fortalecer la marca, Generar valor para el
-          mercado.
+          Tadimex Prueba de que docker actualiza automaticamente al hacer cambios en local y prueba para ver si entendi los branches
         </Typography>
         
         {/* Decorative elements */}

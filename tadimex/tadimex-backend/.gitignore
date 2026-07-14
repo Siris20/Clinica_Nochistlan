@@ -2,7 +2,7 @@
 venv/
 venv_new/
 env/
-**/ .env
+.env
 .venv/
 .python-version
 pip-selfcheck.json
