@@ -1,16 +1,19 @@
-# Tadimex Backend
+# Hospital Nochistlán - ERP/CRM Backend
 
-Bienvenido al repositorio de Tadimex Backend. Este proyecto está enfocado en el desarrollo de la capa de backend para la plataforma Tadimex, que incluye la gestión almacenes, productos, clientes, personal, cotizaciones y con servicios de scraping y envío de whatsapp.
+Bienvenido al repositorio del Backend para el sistema integral ERP/CRM del Hospital Privado Nochistlán. Este proyecto está basado en una arquitectura modular enfocada en la gestión de pacientes, agenda de citas médicas, expedientes clínicos y administración de inventarios/farmacia.
 
 ## Requisitos Previos
 
-Antes de empezar a trabajar con este proyecto, asegúrate de tener instalado:
+Para ejecutar y desarrollar en este proyecto de manera local, solo necesitas tener instalado:
 
-- Git: [https://git-scm.com/downloads/win](https://git-scm.com/downloads/win) 
-- Visual Studio Code: [https://code.visualstudio.com/](https://code.visualstudio.com/) 
-- Python 3.12 o superior: [https://www.python.org/](https://www.python.org/) 
-- MariaDB: [https://mariadb.org/](https://mariadb.org/) 
+- **Git:** [https://git-scm.com/downloads](https://git-scm.com/downloads)
+- **Visual Studio Code:** [https://code.visualstudio.com/](https://code.visualstudio.com/)
+- **Docker Desktop:** [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop) (Incluye Docker Compose)
+- **Gestor de Base de Datos (A elección):** 
+  - **HeidiSQL:** [https://www.heidisql.com/](https://www.heidisql.com/) (Excelente opción si usas Windows, es súper ligero y rápido para MariaDB).
+  - **DBeaver Community:** [https://dbeaver.io/](https://dbeaver.io/) (Ideal si usas Mac/Linux o si prefieres una herramienta visual que genere diagramas de las tablas automáticamente).
 ## Guía de Instalación
+
 ### Clonar el Repositorio
 Crear una carpeta Tadimex en el equipo.
 Abrir la carpeta tadimex desde la terminal y ejecutar el siguiente comando para clonar el repositorio:

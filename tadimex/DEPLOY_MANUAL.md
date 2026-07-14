@@ -75,7 +75,7 @@ URLs:
 Si tu `docker-compose.yml` expone el puerto:
 
 - Host: `127.0.0.1`
-- Puerto: `3306` (lo cambia por 3307 porque ese estaba en uso)
+- Puerto: `3306` 
 - Usuario: `admin`
 - Password: `H8cf708NQ9o73jU2ggQ4`
 - DB: `tadimex_db`
