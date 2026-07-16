@@ -6,6 +6,7 @@ from typing import List, TYPE_CHECKING
 if TYPE_CHECKING:
     from .empresa import Empresa
     from .empleado import Empleado
+    from .cita import Cita  # <-- Agregamos Cita al TYPE_CHECKING
 
 class Area(Base):
     __tablename__ = "areas"
@@ -23,5 +24,11 @@ class Area(Base):
 
     empleados: Mapped[List["Empleado"]] = relationship(
         "Empleado", 
+        back_populates="area"
+    )
+
+    # Relación bidireccional con Citas (NUEVA)
+    citas: Mapped[List["Cita"]] = relationship(
+        "Cita",
         back_populates="area"
     )
