@@ -190,38 +190,47 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
     estado: "Pendiente",
   });
 
+  
   // 2. Cargar Citas según el Filtro de Área
-  const obtenerCitas = async () => {
-    setCitasLoading(true);
-    setCitasError(null);
-    try {
-      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
-      let url = `${baseUrl}/api/v1/citas?fecha_inicio=2026-01-01T00:00:00&fecha_fin=2026-12-31T23:59:59`;
-      if (filtroArea !== "TODAS") {
-        url += `&area_id=${filtroArea}`;
+const obtenerCitas = async () => {
+  setCitasLoading(true);
+  setCitasError(null);
+  try {
+    const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
+    
+    // CORRECCIÓN: Agregamos el "/v1/" para que coincida exactamente con Swagger (/api/v1/)
+    let url = `${baseUrl}/api/v1/?fecha_inicio=2026-01-01T00:00:00&fecha_fin=2026-12-31T23:59:59`;
+    
+    // 2. CORRECCIÓN: Validar que filtroArea sea un número antes de enviarlo
+    if (filtroArea && filtroArea !== "TODAS") {
+      const areaIdNumerico = Number(filtroArea);
+      if (!isNaN(areaIdNumerico)) {
+        url += `&area_id=${areaIdNumerico}`;
       }
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(`Error ${res.status}: No se pudieron cargar las citas`);
-      }
-      const data = await res.json();
-
-      // Transformar datos para react-big-calendar
-      const eventosFormateados = (data as any[]).map((cita: any) => ({
-        id: cita.id,
-        title: `${cita.cliente?.nombre_fiscal || "Cliente"} - ${cita.area?.name || "Cita"}`,
-        start: new Date(cita.fecha_inicio),
-        end: new Date(cita.fecha_fin),
-        ...cita,
-      }));
-      setCitas(eventosFormateados);
-    } catch (err: any) {
-      console.error("Error al obtener las citas:", err);
-      setCitasError(err?.message || "Error desconocido al cargar citas");
-    } finally {
-      setCitasLoading(false);
     }
-  };
+    
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Error ${res.status}: No se pudieron cargar las citas`);
+    }
+    const data = await res.json();
+
+    // Transformar datos para react-big-calendar
+    const eventosFormateados = (data as any[]).map((cita: any) => ({
+      id: cita.id,
+      title: `${cita.cliente?.nombre_fiscal || "Cliente"} - ${cita.area?.name || "Cita"}`,
+      start: new Date(cita.fecha_inicio),
+      end: new Date(cita.fecha_fin),
+      ...cita,
+    }));
+    setCitas(eventosFormateados);
+  } catch (err: any) {
+    console.error("Error al obtener las citas:", err);
+    setCitasError(err?.message || "Error desconocido al cargar citas");
+  } finally {
+    setCitasLoading(false);
+  }
+};
 
   useEffect(() => {
     obtenerCitas();
@@ -289,7 +298,7 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
         method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      });
+      });``
 
       if (!response.ok) {
         const errorData = await response.json();

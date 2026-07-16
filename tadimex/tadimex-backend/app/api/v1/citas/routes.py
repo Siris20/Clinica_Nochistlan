@@ -43,7 +43,7 @@ def obtener_una_cita(
     return get_cita(db, cita_id)
 
 
-@router.get("/citas", response_model=List[CitaReadSchema])
+@router.get("/", response_model=List[CitaReadSchema])
 def obtener_citas_calendario(
     fecha_inicio: datetime = Query(..., description="Fecha de inicio del rango (ej. inicio de mes o semana)"),
     fecha_fin: datetime = Query(..., description="Fecha de fin del rango (ej. fin de mes o semana)"),

@@ -116,7 +116,7 @@ def get_application():
     _app.include_router(stock_router, prefix=settings.API_V1_STR, tags=["Stock"])
     _app.include_router(proveedor_router, prefix=settings.API_V1_STR, tags=["proveedores"])
     _app.include_router(utilidades_router, prefix=settings.API_V1_STR, tags=["utilidades"])
-    _app.include_router(citas_router, prefix="/api", tags=["Citas"])
+    _app.include_router(citas_router, prefix=settings.API_V1_STR, tags=["Citas"])
     
     return _app
 
