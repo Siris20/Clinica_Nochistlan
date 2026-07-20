@@ -28,7 +28,6 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/es"; // Configura las fechas en español
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useNavigate } from "react-router-dom";
 import SearchBar from "../SearchBar";
 import { useEmployee } from "../../hooks/Employee/useEmployee";
 import { useSystemUser } from "../../hooks/SystemUser/useSystemUser";
@@ -38,6 +37,22 @@ import { AdminPanelSettings, Engineering } from "@mui/icons-material";
 
 moment.locale("es");
 const localizer = momentLocalizer(moment);
+
+// --- MAPA DE COLORES POR ESTADO ---
+const COLORES_ESTADO: Record<string, { bg: string; text: string }> = {
+  Pendiente: { bg: "#FFF3E0", text: "#E65100" },   // Naranja claro
+  Confirmada: { bg: "#E3F2FD", text: "#0D47A1" },  // Azul claro
+  Completada: { bg: "#E8F5E9", text: "#1B5E20" },  // Verde claro
+  Cancelada: { bg: "#FFEBEE", text: "#C62828" },   // Rojo claro
+};
+
+// Auxiliar para formatear fechas al formato requerido por <input type="datetime-local"> sin desfases
+const formatToDatetimeLocal = (date: Date | string | null): string => {
+  if (!date) return "";
+  const d = new Date(date);
+  const pad = (num: number) => String(num).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
 
 // Toolbar del Calendario personalizado
 const CustomToolbar = (toolbar: any) => {
@@ -161,92 +176,92 @@ const UsersTable = ({ onMenuItemClick }: any) => {
 
 // --- COMPONENTE PRINCIPAL ---
 export const DashboardComponent = ({ onMenuItemClick }: any) => {
-  const SUCURSAL_ACTIVA_ID = 1; // Asumido o heredado del estado global/contexto del sistema
+  const SUCURSAL_ACTIVA_ID = 1;
 
-  // Hooks para cargar datos
   const { areas, loading: areasLoading } = useAreas();
   const { clients, loading: clientsLoading } = useClients();
 
-  // Estados de datos de la API
   const [citas, setCitas] = useState<any[]>([]);
   const [citasLoading, setCitasLoading] = useState(false);
   const [citasError, setCitasError] = useState(null);
   const [filtroArea, setFiltroArea] = useState("TODAS");
 
-  // Control de modales
   const [openModal, setOpenModal] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
-  // Formulario unificado (Creación y Edición)
-  const [formCita, setFormCita] = useState({
+  // Mantenemos las fechas como objetos Date nativos para evitar mutaciones erróneas por husos horarios
+  const [formCita, setFormCita] = useState<{
+    id: null | number;
+    cliente_id: string;
+    area_id: string;
+    fecha_inicio: Date | null;
+    fecha_fin: Date | null;
+    motivo: string;
+    observaciones: string;
+    estado: string;
+  }>({
     id: null,
     cliente_id: "",
     area_id: "",
-    fecha_inicio: "",
-    fecha_fin: "",
+    fecha_inicio: null,
+    fecha_fin: null,
     motivo: "",
     observaciones: "",
     estado: "Pendiente",
   });
 
-  
-  // 2. Cargar Citas según el Filtro de Área
-const obtenerCitas = async () => {
-  setCitasLoading(true);
-  setCitasError(null);
-  try {
-    const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
-    
-    // CORRECCIÓN: Agregamos el "/v1/" para que coincida exactamente con Swagger (/api/v1/)
-    let url = `${baseUrl}/api/v1/?fecha_inicio=2026-01-01T00:00:00&fecha_fin=2026-12-31T23:59:59`;
-    
-    // 2. CORRECCIÓN: Validar que filtroArea sea un número antes de enviarlo
-    if (filtroArea && filtroArea !== "TODAS") {
-      const areaIdNumerico = Number(filtroArea);
-      if (!isNaN(areaIdNumerico)) {
-        url += `&area_id=${areaIdNumerico}`;
+  const obtenerCitas = async () => {
+    setCitasLoading(true);
+    setCitasError(null);
+    try {
+      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
+      
+      // MANTENIDO EXACTAMENTE IGUAL A TU CÓDIGO ORIGINAL
+      let url = `${baseUrl}/api/v1/?fecha_inicio=2026-01-01T00:00:00&fecha_fin=2026-12-31T23:59:59`;
+      
+      if (filtroArea && filtroArea !== "TODAS") {
+        const areaIdNumerico = Number(filtroArea);
+        if (!isNaN(areaIdNumerico)) {
+          url += `&area_id=${areaIdNumerico}`;
+        }
       }
-    }
-    
-    const res = await fetch(url);
-    if (!res.ok) {
-      throw new Error(`Error ${res.status}: No se pudieron cargar las citas`);
-    }
-    const data = await res.json();
+      
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Error ${res.status}: No se pudieron cargar las citas`);
+      const data = await res.json();
 
-    // Transformar datos para react-big-calendar
-    const eventosFormateados = (data as any[]).map((cita: any) => ({
-      id: cita.id,
-      title: `${cita.cliente?.nombre_fiscal || "Cliente"} - ${cita.area?.name || "Cita"}`,
-      start: new Date(cita.fecha_inicio),
-      end: new Date(cita.fecha_fin),
-      ...cita,
-    }));
-    setCitas(eventosFormateados);
-  } catch (err: any) {
-    console.error("Error al obtener las citas:", err);
-    setCitasError(err?.message || "Error desconocido al cargar citas");
-  } finally {
-    setCitasLoading(false);
-  }
-};
+      const eventosFormateados = (data as any[]).map((cita: any) => ({
+        id: cita.id,
+        title: `${cita.cliente?.nombre_fiscal || "Cliente"} - ${cita.area?.name || "Cita"}`,
+        start: new Date(cita.fecha_inicio),
+        end: new Date(cita.fecha_fin),
+        ...cita,
+      }));
+      setCitas(eventosFormateados);
+    } catch (err: any) {
+      console.error("Error al obtener las citas:", err);
+      setCitasError(err?.message || "Error desconocido al cargar citas");
+    } finally {
+      setCitasLoading(false);
+    }
+  };
 
   useEffect(() => {
     obtenerCitas();
   }, [filtroArea]);
 
-  // 3. Selección de espacio vacío (Apertura de registro)
   const handleSelectSlot = ({ start }: any) => {
-    const horaInicio = moment(start);
-    const horaFin = moment(start).add(1, "hour"); // 1 hora de duración por defecto
+    const dateInicio = new Date(start);
+    const dateFin = new Date(start);
+    dateFin.setHours(dateFin.getHours() + 1);
 
     setFormCita({
       id: null,
       cliente_id: "",
-      area_id: filtroArea !== "TODAS" ? filtroArea : "",
-      fecha_inicio: horaInicio.format("YYYY-MM-DDTHH:mm"),
-      fecha_fin: horaFin.format("YYYY-MM-DDTHH:mm"),
+      area_id: filtroArea !== "TODAS" ? String(filtroArea) : "",
+      fecha_inicio: dateInicio,
+      fecha_fin: dateFin,
       motivo: "",
       observaciones: "",
       estado: "Pendiente",
@@ -255,54 +270,59 @@ const obtenerCitas = async () => {
     setOpenModal(true);
   };
 
-  // 4. Selección de una cita agendada (Apertura de lectura/edición)
   const handleSelectEvent = (evento: any) => {
     setFormCita({
       id: evento.id,
-      cliente_id: evento.cliente_id,
-      area_id: evento.area_id,
-      fecha_inicio: moment(evento.start).format("YYYY-MM-DDTHH:mm"),
-      fecha_fin: moment(evento.end).format("YYYY-MM-DDTHH:mm"),
-      motivo: evento.motivo,
+      cliente_id: evento.cliente_id ? String(evento.cliente_id) : (evento.cliente?.id ? String(evento.cliente.id) : ""),
+      area_id: evento.area_id ? String(evento.area_id) : (evento.area?.id ? String(evento.area.id) : ""),
+      fecha_inicio: new Date(evento.start),
+      fecha_fin: new Date(evento.end),
+      motivo: evento.motivo || "",
       observaciones: evento.observaciones || "",
-      estado: evento.estado,
+      estado: evento.estado || "Pendiente",
     });
     setModoEdicion(true);
     setOpenModal(true);
   };
 
-  // 5. Guardar Cambios (Crear o Editar)
   const handleGuardarCita = async () => {
     try {
-       const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
-      const payload = {
-        cliente_id: parseInt(formCita.cliente_id),
-        area_id: parseInt(formCita.area_id),
+      if (!formCita.fecha_inicio || !formCita.fecha_fin) return;
+
+      const payload: any = {
+        cliente_id: parseInt(formCita.cliente_id, 10),
+        area_id: parseInt(formCita.area_id, 10),
         sucursal_id: SUCURSAL_ACTIVA_ID,
-        fecha_inicio: new Date(formCita.fecha_inicio).toISOString(),
-        fecha_fin: new Date(formCita.fecha_fin).toISOString(),
+        fecha_inicio: moment(formCita.fecha_inicio).format(), 
+        fecha_fin: moment(formCita.fecha_fin).format(),
         motivo: formCita.motivo,
         observaciones: formCita.observaciones,
       };
 
+      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
       let url = `${baseUrl}/api/v1/cita`;
       let method = "POST";
 
       if (modoEdicion) {
+        if (!formCita.id) return;
         url = `${baseUrl}/api/v1/cita/${formCita.id}`;
         method = "PUT";
-        (payload as any).estado = formCita.estado; // Solo editable en modificación
+        payload.estado = formCita.estado;
       }
 
       const response = await fetch(url, {
         method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      });``
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
-        alert(errorData.detail || "Ocurrió un error al procesar la cita.");
+        const mensajeError = typeof errorData.detail === 'object' 
+          ? JSON.stringify(errorData.detail) 
+          : errorData.detail;
+          
+        alert(mensajeError || "Ocurrió un error al procesar la cita.");
         return;
       }
 
@@ -314,10 +334,9 @@ const obtenerCitas = async () => {
     }
   };
 
-  // 6. Eliminar Cita (Con Confirmación)
   const handleEliminarCita = async () => {
     try {
-       const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
+      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
       const response = await fetch(`${baseUrl}/api/v1/cita/${formCita.id}`, {
         method: "DELETE",
       });
@@ -335,10 +354,27 @@ const obtenerCitas = async () => {
     }
   };
 
+  // --- CONTROLADOR DE COLORES DINÁMICOS POR ESTADO ---
+  const eventStyleGetter = (event: any) => {
+    const estado = event.estado || "Pendiente";
+    const colores = COLORES_ESTADO[estado] || { bg: "#3174ad", text: "#ffffff" };
+
+    return {
+      style: {
+        backgroundColor: colores.bg,
+        color: colores.text,
+        borderRadius: "5px",
+        opacity: 0.9,
+        border: `1px solid ${colores.text}`,
+        display: "block",
+        fontWeight: "500"
+      },
+    };
+  };
+
   return (
     <Box sx={{ flexGrow: 1, minHeight: "100vh", padding: 2 }}>
       <Grid container spacing={2}>
-        {/* Fila superior: Empleados y Usuarios */}
         <Grid item xs={12} md={6}>
           <EmployeeTable onMenuItemClick={onMenuItemClick} />
         </Grid>
@@ -346,13 +382,11 @@ const obtenerCitas = async () => {
           <UsersTable onMenuItemClick={onMenuItemClick} />
         </Grid>
 
-        {/* Fila inferior: Calendario y Filtros */}
         <Grid item xs={12} sx={{ mt: 2 }}>
           <Paper sx={{ padding: 3, boxShadow: 3 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>Agenda de Citas</Typography>
               
-              {/* Filtro de Área */}
               <FormControl size="small" sx={{ minWidth: 200 }}>
                 <InputLabel>Filtrar por Área Médica</InputLabel>
                 <Select
@@ -375,11 +409,7 @@ const obtenerCitas = async () => {
               </FormControl>
             </Box>
 
-            {citasError && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {citasError}
-              </Alert>
-            )}
+            {citasError && <Alert severity="error" sx={{ mb: 2 }}>{citasError}</Alert>}
 
             {citasLoading ? (
               <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 600 }}>
@@ -396,6 +426,7 @@ const obtenerCitas = async () => {
                 onSelectSlot={handleSelectSlot}
                 onSelectEvent={handleSelectEvent}
                 components={{ toolbar: CustomToolbar }}
+                eventPropGetter={eventStyleGetter} // Aplica los estilos dinámicos de color
                 messages={{
                   next: "Sig.",
                   previous: "Ant.",
@@ -411,14 +442,13 @@ const obtenerCitas = async () => {
         </Grid>
       </Grid>
 
-      {/* --- MODAL UNIFICADO (CREAR / EDITAR) --- */}
+      {/* --- MODAL UNIFICADO --- */}
       <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ fontWeight: "bold" }}>
           {modoEdicion ? "Detalles y Reagendación de Cita" : "Registrar Nueva Cita"}
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={2} sx={{ mt: 0.5 }}>
-            {/* Paciente / Cliente */}
             <Grid item xs={12}>
               <FormControl fullWidth size="small" disabled={modoEdicion || clientsLoading}>
                 <InputLabel>Paciente</InputLabel>
@@ -440,10 +470,9 @@ const obtenerCitas = async () => {
               </FormControl>
             </Grid>
 
-            {/* Área Médica */}
             <Grid item xs={12}>
               <FormControl fullWidth size="small" disabled={areasLoading}>
-                <InputLabel>Área Médica</InputLabel>
+                <InputLabel>Area Médica</InputLabel>
                 <Select
                   value={formCita.area_id}
                   label="Área Médica"
@@ -462,38 +491,38 @@ const obtenerCitas = async () => {
               </FormControl>
             </Grid>
 
-            {/* Fecha Inicio */}
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 size="small"
                 label="Inicio de la Cita"
                 type="datetime-local"
-                value={formCita.fecha_inicio}
+                value={formatToDatetimeLocal(formCita.fecha_inicio)}
                 InputLabelProps={{ shrink: true }}
                 onChange={(e) => {
-                  const nuevoInicio = e.target.value;
-                  // Si el usuario cambia el inicio, movemos el fin 1 hora automáticamente
-                  const nuevoFin = moment(nuevoInicio).add(1, "hour").format("YYYY-MM-DDTHH:mm");
+                  if (!e.target.value) return;
+                  const nuevoInicio = new Date(e.target.value);
+                  const nuevoFin = new Date(nuevoInicio);
+                  nuevoFin.setHours(nuevoFin.getHours() + 1);
                   setFormCita({ ...formCita, fecha_inicio: nuevoInicio, fecha_fin: nuevoFin });
                 }}
               />
             </Grid>
-
-            {/* Fecha Fin */}
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 size="small"
                 label="Fin de la Cita"
                 type="datetime-local"
-                value={formCita.fecha_fin}
+                value={formatToDatetimeLocal(formCita.fecha_fin)}
                 InputLabelProps={{ shrink: true }}
-                onChange={(e) => setFormCita({ ...formCita, fecha_fin: e.target.value })}
+                onChange={(e) => {
+                  if (!e.target.value) return;
+                  setFormCita({ ...formCita, fecha_fin: new Date(e.target.value) });
+                }}
               />
             </Grid>
 
-            {/* Estado (Solo visible en Modo Edición) */}
             {modoEdicion && (
               <Grid item xs={12}>
                 <FormControl fullWidth size="small">
@@ -512,7 +541,6 @@ const obtenerCitas = async () => {
               </Grid>
             )}
 
-            {/* Motivo */}
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -523,7 +551,6 @@ const obtenerCitas = async () => {
               />
             </Grid>
 
-            {/* Observaciones */}
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -539,7 +566,6 @@ const obtenerCitas = async () => {
         </DialogContent>
         <DialogActions sx={{ justifyContent: "space-between", px: 3, py: 2 }}>
           <Box>
-            {/* Botón de eliminar solo visible si estamos editando */}
             {modoEdicion && (
               <Button variant="outlined" color="error" onClick={() => setOpenConfirmDelete(true)}>
                 Eliminar Cita
@@ -555,7 +581,6 @@ const obtenerCitas = async () => {
         </DialogActions>
       </Dialog>
 
-      {/* --- MODAL DE CONFIRMACIÓN DE ELIMINACIÓN --- */}
       <Dialog open={openConfirmDelete} onClose={() => setOpenConfirmDelete(false)}>
         <DialogTitle sx={{ fontWeight: "bold" }}>¿Eliminar esta cita?</DialogTitle>
         <DialogContent>

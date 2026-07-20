@@ -125,7 +125,6 @@ def update_cita(db: Session, cita_id: int, cita_data: CitaUpdateSchema) -> Cita:
 
     # Solo validar disponibilidad si realmente cambió el horario, área o sucursal
     if cambio_horario:
-        # Determinamos los valores finales para validar el horario
         sucursal = cita_data.sucursal_id if cita_data.sucursal_id is not None else db_cita.sucursal_id
         area = cita_data.area_id if cita_data.area_id is not None else db_cita.area_id
         inicio = cita_data.fecha_inicio if cita_data.fecha_inicio is not None else db_cita.fecha_inicio
@@ -145,15 +144,23 @@ def update_cita(db: Session, cita_id: int, cita_data: CitaUpdateSchema) -> Cita:
                 detail="El nuevo horario solicitado ya está ocupado."
             )
 
-    # Aplicamos los cambios que vienen en el schema
+    # Convertimos los datos del esquema a diccionario
     update_data = cita_data.model_dump(exclude_unset=True)
+    
+    # SEGURIDAD: Evita intentar modificar la llave primaria "id" en el modelo de la base de datos
+    update_data.pop("id", None)
+    
     for key, value in update_data.items():
         setattr(db_cita, key, value)
         
     db.commit()
     db.refresh(db_cita)
-    # Cargar explícitamente las relaciones para la serialización
-    db.refresh(db_cita, ["cliente", "area", "sucursal"])
+    
+    # Forzamos la carga segura de relaciones de forma interna en lugar de usar db.refresh(db_cita, ["cliente", ...])
+    _ = db_cita.cliente
+    _ = db_cita.area
+    _ = db_cita.sucursal
+    
     return db_cita
 
 
