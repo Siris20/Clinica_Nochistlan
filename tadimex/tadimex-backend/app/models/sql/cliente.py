@@ -49,3 +49,4 @@ class Cliente(Base):
     empresa: Mapped["Empresa"] = relationship("Empresa", back_populates="clientes")
     cotizaciones: Mapped[List["Cotizacion"]] = relationship("Cotizacion", back_populates="cliente")
     salidas_venta: Mapped[List["SalidaVenta"]] = relationship("SalidaVenta", back_populates="cliente")
+    citas: Mapped[List["Cita"]] = relationship("Cita", back_populates="cliente", cascade="all, delete-orphan")

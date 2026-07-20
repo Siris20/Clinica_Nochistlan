@@ -24,6 +24,7 @@ from app.api.v1.movimientos.entradas.stock.routes import router as stock_router
 from app.api.v1.movimientos.salidas.ventas.routes import router as venta_inventario_router
 from app.api.v1.proveedores.routes import router as proveedor_router
 from app.api.v1.utilidades.routes import router as utilidades_router
+from app.api.v1.citas.routes import router as citas_router
 
 from fastapi.openapi.utils import get_openapi
 from pathlib import Path
@@ -115,7 +116,10 @@ def get_application():
     _app.include_router(stock_router, prefix=settings.API_V1_STR, tags=["Stock"])
     _app.include_router(proveedor_router, prefix=settings.API_V1_STR, tags=["proveedores"])
     _app.include_router(utilidades_router, prefix=settings.API_V1_STR, tags=["utilidades"])
-
+    _app.include_router(citas_router, prefix=settings.API_V1_STR, tags=["Citas"])
+    
     return _app
 
 app = get_application()
+
+# comntario de prueba

@@ -58,7 +58,7 @@ function About() {
             px: { xs: 2, sm: 0 }
           }}
         >
-          Tadimex cambios automaticamente taquitos de pepena
+          Tadimex cambios pepena taquitos
         </Typography>
         
         {/* Decorative elements */}

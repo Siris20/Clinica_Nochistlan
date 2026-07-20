@@ -3,10 +3,12 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.sql.base import Base
 from typing import TYPE_CHECKING, List, Optional
 
+# Evitamos importaciones circulares en tiempo de ejecución agregando .cita
 if TYPE_CHECKING:
     from .empresa import Empresa
     from .almacen import Almacen
     from .empleado import Empleado
+    from .cita import Cita  # <-- Agregado para que reconozca la relación
 
 class Sucursal(Base):
     __tablename__ = "sucursales"
@@ -55,4 +57,12 @@ class Sucursal(Base):
         "Empleado",
         back_populates="sucursales_gerente",
         foreign_keys=[gerente_id]
+    )
+
+    # Relación bidireccional con Citas (NUEVA)
+    # Permite acceder de forma directa a sucursal.citas
+    citas: Mapped[List["Cita"]] = relationship(
+        "Cita",
+        back_populates="sucursal",
+        cascade="all, delete-orphan"
     )

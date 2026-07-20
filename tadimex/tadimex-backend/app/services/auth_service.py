@@ -77,6 +77,7 @@ def authenticate_user(db: Session, credential: str, password: str) -> Usuario | 
     
     except Exception as e:
         # Manejo de cualquier otro tipo de error
+        logger.exception("Error inesperado durante la autenticación")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error en la autenticación. Por favor, intente nuevamente más tarde."
