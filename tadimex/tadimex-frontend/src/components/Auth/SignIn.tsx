@@ -65,8 +65,8 @@ export const SignIn = () => {
             }}
           >
             <img
-              src="images/tadimex.png"
-              alt="Logo Tadimex"
+              src="images/ClinicaNochistlan_logo.png"
+              alt="Logo LocalHospital"
               style={{
                 width: "120px",
                 height: "auto",

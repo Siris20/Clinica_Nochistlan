@@ -9,6 +9,7 @@ import {
   CircularProgress,
   FormControl,
   InputAdornment,
+  Paper,
 } from "@mui/material";
 import { Container, Stack, styled } from "@mui/system";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
@@ -17,12 +18,14 @@ import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import MessageIcon from "@mui/icons-material/Message";
 import SendIcon from "@mui/icons-material/Send";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 const StyledForm = styled("form")({
-  backgroundColor: "#fff",
-  padding: "20px",
-  borderRadius: "8px",
-  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+  backgroundColor: "#ffffff",
+  padding: "28px",
+  borderRadius: "16px",
+  border: "1px solid #e2e8f0",
+  boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.05)",
 });
 
 function Contact() {
@@ -37,7 +40,8 @@ function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const RECIPIENT_EMAIL = "tadimex@gmail.com";
+  // Correo de contacto de la clínica
+  const RECIPIENT_EMAIL = "clinicanochistlan@gmail.com";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,7 +50,6 @@ function Contact() {
       [name]: value,
     });
 
-    // Limpiar error cuando el usuario comienza a escribir
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -90,15 +93,14 @@ function Contact() {
     if (validateForm()) {
       setIsSubmitting(true);
 
-      // Crear el cuerpo del email
-      const emailBody = `Buen día, estoy interesado en los servicios de Tadimex
+      const emailBody = `Buen día, me gustaría solicitar información sobre los servicios de Clínica Nochistlán.
 
 Datos de contacto:
 - Nombre: ${formData.name}
 - Teléfono: ${formData.phone}
 - Correo: ${formData.email}
 
-Mensaje:
+Consulta o Mensaje:
 ${formData.message}
 
 Quedo atento a su respuesta.
@@ -106,25 +108,17 @@ Quedo atento a su respuesta.
 Saludos cordiales,
 ${formData.name}`;
 
-      // Crear el asunto del email
-      const emailSubject = `Consulta de servicios - ${formData.name}`;
+      const emailSubject = `Consulta Médica / Información - ${formData.name}`;
 
-      // Crear la URL mailto
       const mailtoUrl = `mailto:${RECIPIENT_EMAIL}?subject=${encodeURIComponent(
         emailSubject
       )}&body=${encodeURIComponent(emailBody)}`;
 
-      // Simular procesamiento
       setTimeout(() => {
         setIsSubmitting(false);
-
-        // Abrir la aplicación de correo
         window.location.href = mailtoUrl;
-
-        // Mostrar mensaje de éxito
         setSubmitted(true);
 
-        // Reset formulario después de enviar
         setFormData({
           name: "",
           email: "",
@@ -132,7 +126,6 @@ ${formData.name}`;
           message: "",
         });
 
-        // Ocultar mensaje de éxito después de 5 segundos
         setTimeout(() => {
           setSubmitted(false);
         }, 5000);
@@ -142,83 +135,73 @@ ${formData.name}`;
 
   return (
     <>
+      {/* Encabezado Principal */}
       <Box
         component="section"
         id="contact"
         sx={{
-          backgroundColor: "#0B1426",
+          backgroundColor: "#f8fafc",
           width: "100%",
-          minHeight: "50vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          py: { xs: 6, md: 10 },
-          position: "relative",
-          overflow: "hidden",
-          margin: 0,
-          padding: 0,
-          boxSizing: "border-box",
+          py: { xs: 8, md: 10 },
+          borderBottom: "1px solid #e2e8f0",
         }}
       >
-        <Container
-          maxWidth="lg"
-          sx={{
-            position: "relative",
-            zIndex: 2,
-            textAlign: "center",
-          }}
-        >
+        <Container maxWidth="lg" sx={{ textAlign: "center" }}>
           <Typography
             variant="h2"
             component="h1"
             sx={{
-              color: "white",
-              fontWeight: 700,
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
-              mb: 4,
-              textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
-              letterSpacing: "0.02em",
+              color: "#1e40af",
+              fontWeight: 800,
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+              mb: 1.5,
+              letterSpacing: "-0.02em",
             }}
           >
             Contáctanos
           </Typography>
-
-          {/* Decorative elements */}
-          <Box
+          <Typography
+            variant="body1"
             sx={{
-              position: "absolute",
-              top: "20%",
-              right: "10%",
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-              background: "rgba(255, 255, 255, 0.1)",
-              display: { xs: "none", md: "block" },
+              color: "#475569",
+              maxWidth: "700px",
+              mx: "auto",
+              fontSize: { xs: "1rem", sm: "1.1rem" },
+              mb: 3,
             }}
-          />
+          >
+            Estamos a tu disposición para agendar citas, atender consultas sobre
+            nuestros servicios médicos y brindar la orientación que necesites.
+          </Typography>
           <Box
             sx={{
-              position: "absolute",
-              bottom: "20%",
-              left: "15%",
               width: "60px",
-              height: "60px",
-              borderRadius: "50%",
-              background: "rgba(255,255,255,0.08)",
-              display: { xs: "none", md: "block" },
+              height: "4px",
+              backgroundColor: "#00a884",
+              mx: "auto",
+              borderRadius: "2px",
             }}
           />
         </Container>
       </Box>
 
-      <Box sx={{ p: 3 }}>
-        <Typography variant="body1" sx={{ fontSize: "1.2rem", m: 2 }}>
-          Pregunta por nuestros precios y servicios disponibles. La atención es
-          personalizada.
-        </Typography>
+      {/* Formulario e Información de Contacto */}
+      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 8 } }}>
         <Grid container spacing={4}>
+          {/* Formulario */}
           <Grid item xs={12} md={6}>
             <StyledForm onSubmit={handleSubmit}>
+              <Typography
+                variant="h5"
+                sx={{
+                  color: "#1e40af",
+                  fontWeight: 700,
+                  mb: 3,
+                }}
+              >
+                Envíanos un mensaje
+              </Typography>
+
               {submitted ? (
                 <Box
                   sx={{
@@ -230,8 +213,8 @@ ${formData.name}`;
                   <Typography variant="h6" gutterBottom>
                     ¡Se abrió tu aplicación de correo!
                   </Typography>
-                  <Typography variant="body2">
-                    Revisa si se abrió correctamente y envía el mensaje.
+                  <Typography variant="body2" sx={{ color: "#64748b" }}>
+                    Revisa si se abrió correctamente y confirma el envío de tu mensaje.
                   </Typography>
                 </Box>
               ) : (
@@ -239,7 +222,7 @@ ${formData.name}`;
                   <Grid item xs={12}>
                     <FormControl fullWidth>
                       <TextField
-                        label="Ingresa tu nombre"
+                        label="Nombre completo"
                         variant="outlined"
                         fullWidth
                         required
@@ -251,7 +234,7 @@ ${formData.name}`;
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <PersonIcon />
+                              <PersonIcon sx={{ color: "#00a884" }} />
                             </InputAdornment>
                           ),
                         }}
@@ -261,7 +244,7 @@ ${formData.name}`;
                   <Grid item xs={12}>
                     <FormControl fullWidth>
                       <TextField
-                        label="Ingresa tu correo electrónico"
+                        label="Correo electrónico"
                         variant="outlined"
                         fullWidth
                         required
@@ -274,7 +257,7 @@ ${formData.name}`;
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <EmailIcon />
+                              <EmailIcon sx={{ color: "#00a884" }} />
                             </InputAdornment>
                           ),
                         }}
@@ -284,7 +267,7 @@ ${formData.name}`;
                   <Grid item xs={12}>
                     <FormControl fullWidth>
                       <TextField
-                        label="Teléfono"
+                        label="Teléfono de contacto"
                         variant="outlined"
                         fullWidth
                         required
@@ -296,7 +279,7 @@ ${formData.name}`;
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <PhoneIcon />
+                              <PhoneIcon sx={{ color: "#00a884" }} />
                             </InputAdornment>
                           ),
                         }}
@@ -306,7 +289,7 @@ ${formData.name}`;
                   <Grid item xs={12}>
                     <FormControl fullWidth>
                       <TextField
-                        label="Mensaje"
+                        label="¿En qué podemos ayudarte?"
                         variant="outlined"
                         multiline
                         rows={4}
@@ -321,7 +304,11 @@ ${formData.name}`;
                           startAdornment: (
                             <InputAdornment position="start">
                               <MessageIcon
-                                sx={{ alignSelf: "flex-start", mt: 1 }}
+                                sx={{
+                                  color: "#00a884",
+                                  alignSelf: "flex-start",
+                                  mt: 1,
+                                }}
                               />
                             </InputAdornment>
                           ),
@@ -330,28 +317,32 @@ ${formData.name}`;
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
-                    <Box textAlign="center">
+                    <Box textAlign="center" sx={{ mt: 1 }}>
                       <Button
                         variant="contained"
                         sx={{
-                          backgroundColor: "#F44ecf",
-                          color: "#fff",
-                          "&:hover": { backgroundColor: "#F44ecf" },
+                          backgroundColor: "#1e40af",
+                          color: "#ffffff",
+                          px: 4,
+                          py: 1.2,
+                          fontWeight: 600,
+                          borderRadius: "8px",
+                          "&:hover": { backgroundColor: "#00a884" },
                         }}
                         size="large"
                         type="submit"
                         disabled={isSubmitting}
                         endIcon={
                           isSubmitting ? (
-                            <CircularProgress size={20} />
+                            <CircularProgress size={20} color="inherit" />
                           ) : (
                             <SendIcon />
                           )
                         }
                       >
                         {isSubmitting
-                          ? "Preparando email..."
-                          : "Enviar por correo"}
+                          ? "Preparando correo..."
+                          : "Enviar Consulta"}
                       </Button>
                     </Box>
                   </Grid>
@@ -359,62 +350,129 @@ ${formData.name}`;
               )}
             </StyledForm>
           </Grid>
+
+          {/* Información de Contacto y Mapa */}
           <Grid item xs={12} md={6}>
-            <Box
-              sx={{
-                backgroundColor: "#f0f0f0",
-                p: 2,
-                display: "flex",
-                alignItems: "center",
-                borderRadius: "8px",
-                mb: 2,
-              }}
-            >
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <IconButton
-                  href="https://wa.me/524491388110?text=Buen%20día%2C%20estoy%20interesado%20en%20los%20servicios%20de%20Tadimex"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="WhatsApp"
-                  sx={{
-                    color: "#25d336",
-                    backgroundColor: "#fff",
-                    borderRadius: "50%",
-                    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-                    transition: "transform 0.2s",
-                    "&:hover": {
-                      color: "#fff",
-                      backgroundColor: "#25d336",
-                      transform: "scale(1.1)",
-                    },
-                  }}
-                >
-                  <WhatsAppIcon />
-                </IconButton>
-                <Typography variant="body1">+52 449 138 8110</Typography>
-              </Stack>
-            </Box>
-            <Box
-              sx={{
-                width: "100%",
-                height: "350px",
-                borderRadius: "8px",
-                overflow: "hidden",
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3703.3669823425593!2d-102.29454672494443!3d21.84382398002029!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8429f189e9c30e71%3A0x123456789abcdef0!2sGral%20Luis%20Caballero%20203%2C%20Insurgentes%2C%2020287%20Aguascalientes%2C%20Ags.%2C%20Mexico!5e0!3m2!1ses!2smx!4v1730940873697!5m2!1ses!2smx"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                loading="lazy"
-                title="Google Maps - Tadimex"
-              ></iframe>
-            </Box>
+            <Stack spacing={2}>
+              {/* Tarjeta WhatsApp */}
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 2.5,
+                  backgroundColor: "#ffffff",
+                  borderRadius: "12px",
+                  border: "1px solid #e2e8f0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Stack direction="row" alignItems="center" spacing={2}>
+                  <IconButton
+                    href="https://wa.me/524491388110?text=Buen%20día%2C%20quisiera%20solicitar%20información%20sobre%20Clínica%20Nochistlán"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Atención por WhatsApp"
+                    sx={{
+                      color: "#25d336",
+                      backgroundColor: "#f0fdf4",
+                      borderRadius: "50%",
+                      p: 1.5,
+                      boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
+                      transition: "transform 0.2s",
+                      "&:hover": {
+                        color: "#fff",
+                        backgroundColor: "#25d336",
+                        transform: "scale(1.05)",
+                      },
+                    }}
+                  >
+                    <WhatsAppIcon fontSize="medium" />
+                  </IconButton>
+                  <Box>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: "#64748b", fontWeight: 500 }}
+                    >
+                      Atención Inmediata por WhatsApp
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{ fontWeight: 700, color: "#1e40af" }}
+                    >
+                      +52 449 138 8110
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Paper>
+
+              {/* Tarjeta Ubicación */}
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 2.5,
+                  backgroundColor: "#ffffff",
+                  borderRadius: "12px",
+                  border: "1px solid #e2e8f0",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Stack direction="row" alignItems="center" spacing={2}>
+                  <Box
+                    sx={{
+                      color: "#00a884",
+                      backgroundColor: "#f0fdf4",
+                      borderRadius: "50%",
+                      p: 1.5,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <LocationOnIcon fontSize="medium" />
+                  </Box>
+                  <Box>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: "#64748b", fontWeight: 500 }}
+                    >
+                      Ubicación
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 600, color: "#334155" }}
+                    >
+                      Nochistlán de Mejía, Zacatecas, México
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Paper>
+
+              {/* Mapa Google Maps enfocado en Nochistlán */}
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "320px",
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  border: "1px solid #e2e8f0",
+                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.05)",
+                }}
+              >
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29688.086438864757!2d-102.86248384218206!3d21.363842542036733!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x842e4726569eb23b%3A0x6a056a237376c90c!2sNochistl%C3%A1n%20de%20Mej%C3%ADa%2C%20Zac.!5e0!3m2!1ses!2smx!4v1710000000000!5m2!1ses!2smx"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  title="Google Maps - Nochistlán de Mejía"
+                ></iframe>
+              </Box>
+            </Stack>
           </Grid>
         </Grid>
-      </Box>
+      </Container>
     </>
   );
 }
