@@ -58,7 +58,7 @@ function About() {
             px: { xs: 2, sm: 0 }
           }}
         >
-          Tadimex cambios pepena taquitos
+          Tadimex  texto generico 
         </Typography>
         
         {/* Decorative elements */}

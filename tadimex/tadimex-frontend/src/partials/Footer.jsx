@@ -45,10 +45,11 @@ function Footer() {
                 textAlign: { xs: "center", md: "left" },
               }}
             >
-              Somos una empresa que se especializa en gestionar las actividades
-              de marketing de nuestros clientes, con el objetivo de lograr los
-              siguientes resultados: Atraer consumidores, Incrementar las
-              ventas, Fortalecer la marca y Generar valor para el mercado.
+              En Clínica Nochistlán nos dedicamos a ofrecer atención médica privada con calidad, profesionalismo y un trato humano. Nuestro 
+              equipo de especialistas, apoyado por tecnología moderna e instalaciones seguras, trabaja para brindar soluciones integrales que 
+              promuevan la salud y el bienestar de nuestros pacientes.
+              Nos distinguimos por la excelencia, la innovación y el compromiso con cada persona que deposita su confianza en nosotros, 
+              ofreciendo una atención personalizada donde la salud y la calidez humana siempre son nuestra prioridad.
             </Typography>
           </Grid>
 
