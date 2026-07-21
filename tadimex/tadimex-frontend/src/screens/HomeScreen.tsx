@@ -24,7 +24,7 @@ function HomeScreen() {
       <Header />
       <div className="background-container" style={{ position: 'relative' }}>
         <img
-          src="images/tadimex-portada.png"
+          src="images/ClinicaNochistlan_Banner.png"
           alt="Tadimex"
           className="banner d-block w-100"
         />
@@ -77,7 +77,7 @@ function HomeScreen() {
       <Services />
 
       {/* Planes de Precios */}
-      <PricePlans />
+      {/* <PricePlans /> */}
 
       {/* Contacto */}
       <Contact />

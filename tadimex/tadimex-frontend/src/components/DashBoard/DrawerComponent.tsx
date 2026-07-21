@@ -237,18 +237,18 @@ export const DrawerComponent = ({ onMenuItemClick }) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          padding: "16px 0",
+          padding: "50px 0",
           height: "70px",
         }}
       >
         <img
-          src="/images/tadimex.png"
-          alt="Tadimex Logo"
+          src="/images/ClinicaNochistlan_logo.png"
+          alt="Dash/DrawerComponent"
           title="Tadimex Logo"
           className="drawer-logo"
           style={{
-            width: "150px",
-            maxHeight: "50px",
+            width: "250px",
+            maxHeight: "100px",
             objectFit: "contain",
           }}
         />

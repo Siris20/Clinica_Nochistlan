@@ -13,7 +13,7 @@ export const Loader = () => {
         justifyContent: 'center',
       }}
     >
-      <img src="/images/tadimex.png" alt="Tadimex Logo" style={{ marginBottom: 20, width:'100px' }} />
+      <img src="/images/ClinicaNochistlan_logo.png" alt="Clinica Nochistlan" style={{ marginBottom: 20, width:'100px' }} />
       <CircularProgress size={60} />
     </Box>
   );

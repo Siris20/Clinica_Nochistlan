@@ -1,165 +1,147 @@
 import React from "react";
-import { Box, Typography, Container } from "@mui/material";
+import { Box, Typography, Container, Button } from "@mui/material";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-export const  Services = () => {
+export const Services = () => {
   const services = [
     {
       id: 1,
-      title: "Posicionamiento SEO",
-      description: "La agencia desarrolla un software para conectar mejor con personas que buscan productos similares a los de sus clientes y lo que hace este sistema es la optimización para motores de búsqueda a este sistema le llamaron Tuwe, el algoritmo busca fragmentos enriquecidos con palabras claves que podrían ayudar aumentar la visibilidad del sitio Web y generando las mejores recomendaciones que logren que más clientes se interesen por sus productos o servicios vistos en su sitio web",
-      image: "/images/posicionamiento_seo.png",
-      imageAlt: "Posicionamiento SEO",
-      backgroundColor: "#f8f9fa",
-      textBackground: "white"
+      title: "Consultas Médicas y Especialidades",
+      description:
+        "Ofrecemos atención médica integral con un equipo de especialistas dedicados a la prevención, diagnóstico y tratamiento oportuno de diversas condiciones de salud. Contamos con consulta general, pediatría, ginecología y medicina interna.",
+      image: "/images/consulta_medica.webp", // Asegúrate de contar con imágenes alusivas a la clínica
+      imageAlt: "Consulta Médica en Clínica Nochistlán",
+      backgroundColor: "#f8fafc",
+      textBackground: "#ffffff",
     },
     {
       id: 2,
-      title: "Visuales en Alta Calidad",
-      description: "La agencia se encarga de diseñar, planificar, ejecutar y evaluar estrategias comunicativas cuyo objetivo principal es la mejora de la imagen y la reputación de una empresa y establecer relaciones a largo plazo con sus clientes.",
-      image: "/images/visuales_alta_calidad.png",
-      imageAlt: "Visuales en Alta Calidad",
+      title: "Atención de Urgencias 24/7",
+      description:
+        "Nuestro servicio de urgencias está preparado para atender eventualidades y situaciones críticas a cualquier hora del día. Ofrecemos estabilización inmediata, curaciones y monitoreo continuo con personal altamente capacitado.",
+      image: "/images/urgencia_medica.webp",
+      imageAlt: "Atención de Urgencias",
       backgroundColor: "#ffffff",
-      textBackground: "#f5f5f5"
+      textBackground: "#f1f5f9",
     },
     {
       id: 3,
-      title: "Relaciones Públicas",
-      description: "Nos especializamos en desarrollar infraestructuras funcionales y sostenibles que se adaptan a las necesidades específicas de tu empresa. Construir espacios eficientes no solo mejora tu operación, sino que también contribuye al desarrollo sostenible.",
-      image: "/images/relaciones_publicas.png",
-      imageAlt: "Relaciones Públicas",
-      backgroundColor: "#f8f9fa",
-      textBackground: "white"
+      title: "Hospitalización y Quirófano",
+      description:
+        "Disponemos de habitaciones confortables y seguras para la recuperación de nuestros pacientes, así como un área quirúrgica equipada con tecnología moderna para procedimientos programados y de emergencia.",
+      image: "/images/quirofano_hospital.webp",
+      imageAlt: "Quirófano e Instalaciones",
+      backgroundColor: "#f8fafc",
+      textBackground: "#ffffff",
     },
   ];
 
   return (
     <>
-      {/* Título principal */}
+      {/* Título Principal de la Sección */}
       <Box
         component="section"
         id="services"
         sx={{
-          backgroundColor: '#0B1426',
-          width: '100%',
-          minHeight: '50vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          py: { xs: 6, md: 10 },
-          position: 'relative',
-          overflow: 'hidden',
-          margin: 0,
-          padding: 0,
-          boxSizing: 'border-box'
+          backgroundColor: "#f8fafc",
+          width: "100%",
+          py: { xs: 8, md: 10 },
+          borderBottom: "1px solid #e2e8f0",
         }}
       >
-        <Container 
-          maxWidth="lg" 
-          sx={{ 
-            position: 'relative', 
-            zIndex: 2,
-            textAlign: 'center'
-          }}
-        >
+        <Container maxWidth="lg" sx={{ textAlign: "center" }}>
           <Typography
             variant="h2"
-            component="h1"
+            component="h2"
             sx={{
-              color: 'white',
-              fontWeight: 700,
-              fontSize: { xs: '2rem', sm: '2.5rem', md: '3.5rem' },
-              mb: 4,
-              textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-              letterSpacing: '0.02em'
+              color: "#1e40af", // Azul principal
+              fontWeight: 800,
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+              mb: 1.5,
+              letterSpacing: "-0.02em",
             }}
           >
             Nuestros Servicios
           </Typography>
-          
-          {/* Decorative elements */}
-          <Box
+          <Typography
+            variant="body1"
             sx={{
-              position: 'absolute',
-              top: '20%',
-              right: '10%',
-              width: '100px',
-              height: '100px',
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              display: { xs: 'none', md: 'block' }
+              color: "#475569",
+              maxWidth: "700px",
+              mx: "auto",
+              fontSize: { xs: "1rem", sm: "1.1rem" },
+              mb: 3,
             }}
-          />
+          >
+            Conoce las áreas de atención médica y especializada que ponemos a
+            disposición para el cuidado y salud de tu familia en Nochistlán.
+          </Typography>
           <Box
             sx={{
-              position: 'absolute',
-              bottom: '20%',
-              left: '15%',
-              width: '60px',
-              height: '60px',
-              borderRadius: '50%',
-              background: 'rgba(255,255,255,0.08)',
-              display: { xs: 'none', md: 'block' }
+              width: "60px",
+              height: "4px",
+              backgroundColor: "#00a884", // Verde turquesa de acento
+              mx: "auto",
+              borderRadius: "2px",
             }}
           />
         </Container>
       </Box>
 
-      {/* Servicios */}
+      {/* Bloques de Servicios Alternados */}
       {services.map((service) => {
         const isEven = service.id % 2 === 0;
-        
+
         return (
           <Box
             key={service.id}
             sx={{
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
-              minHeight: "500px",
+              minHeight: "450px",
               backgroundColor: service.backgroundColor,
+              borderBottom: "1px solid #e2e8f0",
             }}
           >
-            {/* Sección de imagen */}
+            {/* Sección de Imagen */}
             <Box
               sx={{
-                flex: { xs: "1", md: "0 0 60%" },
+                flex: { xs: "1", md: "0 0 50%" },
                 position: "relative",
-                minHeight: { xs: "300px", md: "500px" },
-                order: { 
-                  xs: 1, 
-                  md: isEven ? 2 : 1 
+                minHeight: { xs: "280px", md: "450px" },
+                order: {
+                  xs: 1,
+                  md: isEven ? 2 : 1,
                 },
                 overflow: "hidden",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
               }}
             >
               <img
                 src={service.image}
                 title={service.imageAlt}
                 alt={service.imageAlt}
-                style={{ 
+                style={{
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  objectPosition: "center"
+                  objectPosition: "center",
                 }}
               />
             </Box>
 
-            {/* Sección de texto */}
+            {/* Sección de Texto */}
             <Box
               sx={{
-                flex: { xs: "1", md: "0 0 40%" },
+                flex: { xs: "1", md: "0 0 50%" },
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "flex-start",
-                padding: { xs: "2rem", md: "3rem" },
+                padding: { xs: "2.5rem 1.5rem", md: "4rem 5rem" },
                 backgroundColor: service.textBackground,
-                order: { 
-                  xs: 2, 
-                  md: isEven ? 1 : 2 
+                order: {
+                  xs: 2,
+                  md: isEven ? 1 : 2,
                 },
               }}
             >
@@ -167,10 +149,11 @@ export const  Services = () => {
                 variant="h4"
                 component="h3"
                 sx={{
-                  fontWeight: "bold",
+                  fontWeight: 700,
                   mb: 2,
-                  color: "#092A40",
+                  color: "#1e40af",
                   fontSize: { xs: "1.5rem", md: "2rem" },
+                  letterSpacing: "-0.01em",
                 }}
               >
                 {service.title}
@@ -179,21 +162,22 @@ export const  Services = () => {
               <Typography
                 variant="body1"
                 sx={{
-                  color: "#6B7280",
+                  color: "#475569",
                   lineHeight: 1.8,
-                  fontSize: { xs: "0.9rem", md: "1rem" },
-                  textAlign: "justify",
-                  mb: 2,
+                  fontSize: { xs: "0.95rem", md: "1.05rem" },
+                  mb: 3,
                 }}
               >
                 {service.description}
               </Typography>
+
+              {/* Detalle visual de separación / Acción opcional */}
               <Box
                 sx={{
-                  mt: 4,
-                  width: "60px",
-                  height: "4px",
-                  backgroundColor: "#E53E3E",
+                  width: "50px",
+                  height: "3px",
+                  backgroundColor: "#00a884",
+                  borderRadius: "2px",
                 }}
               />
             </Box>
