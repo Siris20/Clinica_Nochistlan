@@ -215,7 +215,7 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
     setCitasLoading(true);
     setCitasError(null);
     try {
-      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
+      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8001";
       
       // MANTENIDO EXACTAMENTE IGUAL A TU CÓDIGO ORIGINAL
       let url = `${baseUrl}/api/v1/?fecha_inicio=2026-01-01T00:00:00&fecha_fin=2026-12-31T23:59:59`;
@@ -299,7 +299,7 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
         observaciones: formCita.observaciones,
       };
 
-      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
+      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8001";
       let url = `${baseUrl}/api/v1/cita`;
       let method = "POST";
 
