@@ -106,9 +106,9 @@ export const CataloguesScreen = () => {
                     }}
                   >
                     <img
-                      src="/images/tadimex.png"
-                      alt="Tadimex Logo"
-                      title="Tadimex Logo"
+                      src="/images/ClinicaNochistlan_logo.png"
+                      alt="Clinica Logo"
+                      title="Clinica Logo"
                       className="logo"
                       style={{
                         height: "100%",
@@ -200,9 +200,9 @@ export const CataloguesScreen = () => {
                   }}
                 >
                   <img
-                    src="/images/tadimex.png"
-                    alt="Tadimex Logo"
-                    title="Tadimex Logo"
+                    src="/images/ClinicaNochistlan_logo.png"
+                    alt="Clinica Logo"
+                    title="Clinica Logo"
                     className="logo"
                     style={{ height: "30px", width: "auto" }}
                   />

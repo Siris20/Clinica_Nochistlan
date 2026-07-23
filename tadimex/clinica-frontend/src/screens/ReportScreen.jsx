@@ -44,7 +44,7 @@ function ReportScreen() {
     <Page size="A4" style={styles.page}>
       <Image
         style={styles.headerImage}
-        src="images/tadimex.png" // Reemplaza con la ruta de tu imagen
+        src="images/ClinicaNochistlan_Logo.png" // Reemplaza con la ruta de tu imagen
       />
       <View style={styles.content}>
         <View style={styles.section}>

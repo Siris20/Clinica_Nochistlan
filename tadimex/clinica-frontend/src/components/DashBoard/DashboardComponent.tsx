@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -6,15 +6,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Fab,
   Grid,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
   FormControl,
   InputLabel,
@@ -28,12 +21,9 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/es"; // Configura las fechas en español
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import SearchBar from "../SearchBar";
-import { useEmployee } from "../../hooks/Employee/useEmployee";
-import { useSystemUser } from "../../hooks/SystemUser/useSystemUser";
 import { useAreas } from "../../hooks/Areas/useAreas";
 import { useClients } from "../../hooks/Clients/useClients";
-import { AdminPanelSettings, Engineering } from "@mui/icons-material";
+import { useCitas } from "../../hooks/Citas/useCitas";
 
 moment.locale("es");
 const localizer = momentLocalizer(moment);
@@ -79,118 +69,30 @@ const CustomToolbar = (toolbar: any) => {
   );
 };
 
-// --- TABLA DE EMPLEADOS ---
-const EmployeeTable = ({ onMenuItemClick }: any) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const { employees } = useEmployee();
-
-  const filteredData = employees.filter((row: any) =>
-    row.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <Paper sx={{ padding: 2, boxShadow: 3, height: "100%", position: "relative" }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
-        <Typography variant="h6" gutterBottom component="div">Empleados</Typography>
-        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} showIcons={false} />
-      </Box>
-      <TableContainer sx={{ maxHeight: 200, overflow: "auto" }}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ backgroundColor: "#f1f1f1" }}>Nombre</TableCell>
-              <TableCell sx={{ backgroundColor: "#f1f1f1" }}>Puesto</TableCell>
-              <TableCell sx={{ backgroundColor: "#f1f1f1" }}>Estatus</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredData.map((employee, index) => (
-              <TableRow key={index}>
-                <TableCell>{employee?.name + " " + employee?.last_name}</TableCell>
-                <TableCell>{employee?.position}</TableCell>
-                <TableCell>{employee?.status}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Fab
-        color="primary"
-        sx={{ position: "absolute", bottom: 16, right: 16, width: 40, height: 40 }}
-        onClick={() => onMenuItemClick(9)}
-      >
-        <Engineering />
-      </Fab>
-    </Paper>
-  );
-};
-
-// --- TABLA DE USUARIOS ---
-const UsersTable = ({ onMenuItemClick }: any) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const { systemUsers } = useSystemUser();
-
-  const filteredData = systemUsers.filter((row) =>
-    row.employeeData?.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <Paper sx={{ padding: 2, boxShadow: 3, height: "100%", position: "relative" }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
-        <Typography variant="h6" gutterBottom component="div">Usuarios del sistema</Typography>
-        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} showIcons={false} />
-      </Box>
-      <TableContainer sx={{ maxHeight: 200, overflow: "auto" }}>
-        <Table stickyHeader size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ backgroundColor: "#f1f1f1" }}>Nombre</TableCell>
-              <TableCell sx={{ backgroundColor: "#f1f1f1" }}>Privilegio</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredData.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>
-                  {user.employeeData?.name + " " + user.employeeData?.last_name || user.name + " " + user.last_name}
-                </TableCell>
-                <TableCell>{user.rol}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Fab
-        color="primary"
-        sx={{
-          position: "absolute", bottom: 16, right: 16, width: 40, height: 40,
-          backgroundColor: "#25D366", "&:hover": { backgroundColor: "#1DA851" },
-        }}
-        onClick={() => onMenuItemClick(12)}
-      >
-        <AdminPanelSettings />
-      </Fab>
-    </Paper>
-  );
-};
-
 // --- COMPONENTE PRINCIPAL ---
-export const DashboardComponent = ({ onMenuItemClick }: any) => {
+export const DashboardComponent = () => {
   const SUCURSAL_ACTIVA_ID = 1;
 
+  // Custom Hooks
   const { areas, loading: areasLoading } = useAreas();
   const { clients, loading: clientsLoading } = useClients();
 
-  const [citas, setCitas] = useState<any[]>([]);
-  const [citasLoading, setCitasLoading] = useState(false);
-  const [citasError, setCitasError] = useState(null);
   const [filtroArea, setFiltroArea] = useState("TODAS");
+
+  // Integración de useCitas
+  const {
+    citas,
+    loading: citasLoading,
+    error: citasError,
+    handleSaveCita,
+    handleDeleteCita,
+  } = useCitas(filtroArea);
 
   const [openModal, setOpenModal] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
-  // Mantenemos las fechas como objetos Date nativos para evitar mutaciones erróneas por husos horarios
+  // Estado del formulario
   const [formCita, setFormCita] = useState<{
     id: null | number;
     cliente_id: string;
@@ -210,46 +112,6 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
     observaciones: "",
     estado: "Pendiente",
   });
-
-  const obtenerCitas = async () => {
-    setCitasLoading(true);
-    setCitasError(null);
-    try {
-      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8001";
-      
-      // MANTENIDO EXACTAMENTE IGUAL A TU CÓDIGO ORIGINAL
-      let url = `${baseUrl}/api/v1/?fecha_inicio=2026-01-01T00:00:00&fecha_fin=2026-12-31T23:59:59`;
-      
-      if (filtroArea && filtroArea !== "TODAS") {
-        const areaIdNumerico = Number(filtroArea);
-        if (!isNaN(areaIdNumerico)) {
-          url += `&area_id=${areaIdNumerico}`;
-        }
-      }
-      
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Error ${res.status}: No se pudieron cargar las citas`);
-      const data = await res.json();
-
-      const eventosFormateados = (data as any[]).map((cita: any) => ({
-        id: cita.id,
-        title: `${cita.cliente?.nombre_fiscal || "Cliente"} - ${cita.area?.name || "Cita"}`,
-        start: new Date(cita.fecha_inicio),
-        end: new Date(cita.fecha_fin),
-        ...cita,
-      }));
-      setCitas(eventosFormateados);
-    } catch (err: any) {
-      console.error("Error al obtener las citas:", err);
-      setCitasError(err?.message || "Error desconocido al cargar citas");
-    } finally {
-      setCitasLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    obtenerCitas();
-  }, [filtroArea]);
 
   const handleSelectSlot = ({ start }: any) => {
     const dateInicio = new Date(start);
@@ -293,41 +155,15 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
         cliente_id: parseInt(formCita.cliente_id, 10),
         area_id: parseInt(formCita.area_id, 10),
         sucursal_id: SUCURSAL_ACTIVA_ID,
-        fecha_inicio: moment(formCita.fecha_inicio).format(), 
+        fecha_inicio: moment(formCita.fecha_inicio).format(),
         fecha_fin: moment(formCita.fecha_fin).format(),
         motivo: formCita.motivo,
         observaciones: formCita.observaciones,
+        ...(modoEdicion && { estado: formCita.estado }),
       };
 
-      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8001";
-      let url = `${baseUrl}/api/v1/cita`;
-      let method = "POST";
-
-      if (modoEdicion) {
-        if (!formCita.id) return;
-        url = `${baseUrl}/api/v1/cita/${formCita.id}`;
-        method = "PUT";
-        payload.estado = formCita.estado;
-      }
-
-      const response = await fetch(url, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        const mensajeError = typeof errorData.detail === 'object' 
-          ? JSON.stringify(errorData.detail) 
-          : errorData.detail;
-          
-        alert(mensajeError || "Ocurrió un error al procesar la cita.");
-        return;
-      }
-
+      await handleSaveCita(payload, modoEdicion, formCita.id);
       setOpenModal(false);
-      obtenerCitas();
     } catch (err: any) {
       console.error("Error al guardar:", err);
       alert("Error al guardar la cita: " + (err?.message || "Error desconocido"));
@@ -336,18 +172,10 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
 
   const handleEliminarCita = async () => {
     try {
-      const baseUrl = (import.meta as any).env.VITE_API_SERVER || "http://localhost:8000";
-      const response = await fetch(`${baseUrl}/api/v1/cita/${formCita.id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setOpenConfirmDelete(false);
-        setOpenModal(false);
-        obtenerCitas();
-      } else {
-        alert("No se pudo eliminar la cita.");
-      }
+      if (!formCita.id) return;
+      await handleDeleteCita(formCita.id);
+      setOpenConfirmDelete(false);
+      setOpenModal(false);
     } catch (err: any) {
       console.error("Error al eliminar:", err);
       alert("Error al eliminar la cita: " + (err?.message || "Error desconocido"));
@@ -375,14 +203,7 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
   return (
     <Box sx={{ flexGrow: 1, minHeight: "100vh", padding: 2 }}>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <EmployeeTable onMenuItemClick={onMenuItemClick} />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <UsersTable onMenuItemClick={onMenuItemClick} />
-        </Grid>
-
-        <Grid item xs={12} sx={{ mt: 2 }}>
+        <Grid item xs={12}>
           <Paper sx={{ padding: 3, boxShadow: 3 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>Agenda de Citas</Typography>
@@ -399,7 +220,7 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
                   {areasLoading ? (
                     <MenuItem disabled>Cargando áreas...</MenuItem>
                   ) : areas && areas.length > 0 ? (
-                    areas.map((area) => (
+                    areas.map((area: any) => (
                       <MenuItem key={area.id} value={area.id}>{area.name}</MenuItem>
                     ))
                   ) : (
@@ -426,7 +247,7 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
                 onSelectSlot={handleSelectSlot}
                 onSelectEvent={handleSelectEvent}
                 components={{ toolbar: CustomToolbar }}
-                eventPropGetter={eventStyleGetter} // Aplica los estilos dinámicos de color
+                eventPropGetter={eventStyleGetter}
                 messages={{
                   next: "Sig.",
                   previous: "Ant.",
@@ -460,7 +281,7 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
                   {clientsLoading ? (
                     <MenuItem disabled>Cargando clientes...</MenuItem>
                   ) : clients && clients.length > 0 ? (
-                    clients.map((cli) => (
+                    clients.map((cli: any) => (
                       <MenuItem key={cli.id} value={cli.id}>{cli.nombre_fiscal}</MenuItem>
                     ))
                   ) : (
@@ -472,7 +293,7 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
 
             <Grid item xs={12}>
               <FormControl fullWidth size="small" disabled={areasLoading}>
-                <InputLabel>Area Médica</InputLabel>
+                <InputLabel>Área Médica</InputLabel>
                 <Select
                   value={formCita.area_id}
                   label="Área Médica"
@@ -481,7 +302,7 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
                   {areasLoading ? (
                     <MenuItem disabled>Cargando áreas...</MenuItem>
                   ) : areas && areas.length > 0 ? (
-                    areas.map((area) => (
+                    areas.map((area: any) => (
                       <MenuItem key={area.id} value={area.id}>{area.name}</MenuItem>
                     ))
                   ) : (
@@ -581,6 +402,7 @@ export const DashboardComponent = ({ onMenuItemClick }: any) => {
         </DialogActions>
       </Dialog>
 
+      {/* --- DIÁLOGO DE CONFIRMACIÓN DE ELIMINACIÓN --- */}
       <Dialog open={openConfirmDelete} onClose={() => setOpenConfirmDelete(false)}>
         <DialogTitle sx={{ fontWeight: "bold" }}>¿Eliminar esta cita?</DialogTitle>
         <DialogContent>

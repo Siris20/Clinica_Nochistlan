@@ -52,136 +52,8 @@
 }
 
 /* ==========================================
-   ESTILOS PARA <NavBarContent /> (CENTERED)
+   ESTILOS PARA <NavBarContent />
    ========================================== */
-/* Asegura que el componente de navegación ocupe el centro */
-.header-nav,
-.navbar-content-container {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Centra horizontalmente los links */
-  flex: 1; /* Ocupa todo el espacio central libre */
-  gap: 28px;
-  margin: 0 24px;
-}
-
-/* Estilos de los links en fondo blanco */
-.header-link,
-.header-link-catalogues {
-  text-decoration: none;
-  color: #334155; /* Gris oscuro para alta legibilidad sobre blanco */
-  font-weight: 500;
-  font-size: 0.95rem;
-  position: relative;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-/* Subrayado animado en azul */
-.header-link::after,
-.header-link-catalogues::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  display: block;
-  margin-top: 4px;
-  left: 50%;
-  background: #2563eb; /* Azul CTA vibrante */
-  transition: width 0.3s ease, left 0.3s ease;
-}
-
-.header-link:hover,
-.header-link-catalogues:hover,
-.active-link {
-  color: #2563eb; /* Cambia a azul en hover y estado activo */
-}
-
-.header-link:hover::after,
-.header-link-catalogues:hover::after,
-.active-link::after {
-  width: 100%;
-  left: 0;
-}
-
-/* ==========================================
-   REDES SOCIALES Y BOTÓN CTA (DERECHA)
-   ========================================== */
-.social-links {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.social-links a {
-  color: #1e40af; /* Iconos en azul */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background-color: #f1f5f9;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.social-links a:hover {
-  background-color: #2563eb;
-  color: #ffffff;
-  transform: translateY(-2px);
-}
-
-.btn-iniciar-sesion {
-  background-color: #2563eb; /* Botón destacado azul */
-  color: #ffffff !important;
-  text-decoration: none;
-  padding: 8px 18px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: background-color 0.2s ease;
-}
-
-.btn-iniciar-sesion:hover {
-  background-color: #1d4ed8;
-}
-
-/* ==========================================
-   MENÚ OFFCANVAS MÓVIL
-   ========================================== */
-.offcanvas-header {
-  padding: 1rem;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.offcanvas-body .list-group-item {
-  border: none;
-  padding: 0.75rem 1rem;
-  color: #1e40af;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-}
-
-.offcanvas-body .list-group-item:hover {
-  background-color: #eff6ff;
-  color: #2563eb;
-}
-
-/* ==========================================
-   RESPONSIVE DESIGN
-   ========================================== */
-@media (max-width: 992px) {
-  .logo-container {
-    width: 100%;
-  }
-
-  .header-nav {
-    display: none;
-  }
-}
 /* Contenedor Flex principal dentro del NavBarContent */
 .header-nav-container {
   display: flex;
@@ -208,11 +80,52 @@
   margin-left: auto; /* Garantiza que este bloque se pegue a la derecha */
 }
 
-/* Redes sociales */
+/* Estilo para los textos de navegación */
+.header-link,
+.header-link-catalogues {
+  text-decoration: none;
+  color: #334155;
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+  padding: 4px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.header-link:hover,
+.header-link-catalogues:hover,
+.active-link {
+  color: #00a884; /* Verde turquesa en hover y activo */
+}
+
+.header-link::after,
+.header-link-catalogues::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #00a884;
+  transition: width 0.2s ease, left 0.2s ease;
+}
+
+.header-link:hover::after,
+.header-link-catalogues:hover::after,
+.active-link::after {
+  width: 100%;
+  left: 0;
+}
+
+/* ==========================================
+   REDES SOCIALES Y BOTÓN CTA (DERECHA)
+   ========================================== */
 .social-links {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .social-icon-link {
@@ -228,40 +141,77 @@
 
 .social-icon-link:hover {
   background-color: #f1f5f9;
-  color: #2563eb;
+  color: #00a884;
   transform: translateY(-1px);
 }
 
-/* Estilo para los textos de navegación en fondo blanco */
-.header-link {
+.btn-iniciar-sesion {
+  background-color: #00a884; /* Botón turquesa */
+  color: #ffffff !important;
   text-decoration: none;
-  color: #334155;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.btn-iniciar-sesion:hover {
+  background-color: #008f70;
+}
+
+/* ==========================================
+   MENÚ OFFCANVAS MÓVIL
+   ========================================== */
+.offcanvas-header {
+  padding: 1.25rem 1rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Logo más grande y centrado dentro del Offcanvas */
+.offcanvas-logo {
+  max-height: 58px; /* Ajusta este valor si deseas mayor tamaño */
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.offcanvas-logo:hover {
+  transform: scale(1.03);
+}
+
+.offcanvas-body .list-group-item {
+  border: none;
+  padding: 0.85rem 1rem;
+  color: #1e40af;
   font-weight: 500;
-  font-size: 0.95rem;
-  position: relative;
-  padding: 4px 0;
-  cursor: pointer;
-  transition: color 0.2s ease;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
 }
 
-.header-link:hover,
-.active-link {
-  color: #00a884; /* Cambia a verde/turquesa o azul según tu preferencia */
+.offcanvas-body .list-group-item:hover {
+  background-color: #eff6ff;
 }
 
-.header-link::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: 0;
-  left: 50%;
-  background-color: #00a884;
-  transition: width 0.2s ease, left 0.2s ease;
+.offcanvas-body .social-links {
+  justify-content: center;
+  padding: 0.5rem 0;
 }
 
-.header-link:hover::after,
-.active-link::after {
-  width: 100%;
-  left: 0;
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+@media (max-width: 992px) {
+  .logo-container {
+    width: auto;
+  }
+
+  .header-nav-container,
+  .header-nav {
+    display: none;
+  }
 }
