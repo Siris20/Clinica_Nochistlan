@@ -25,6 +25,7 @@ from app.api.v1.movimientos.salidas.ventas.routes import router as venta_inventa
 from app.api.v1.proveedores.routes import router as proveedor_router
 from app.api.v1.utilidades.routes import router as utilidades_router
 from app.api.v1.citas.routes import router as citas_router
+from app.api.v1.especialistas.routes import router as especialistas_router
 
 from fastapi.openapi.utils import get_openapi
 from pathlib import Path
@@ -117,6 +118,7 @@ def get_application():
     _app.include_router(proveedor_router, prefix=settings.API_V1_STR, tags=["proveedores"])
     _app.include_router(utilidades_router, prefix=settings.API_V1_STR, tags=["utilidades"])
     _app.include_router(citas_router, prefix=settings.API_V1_STR, tags=["Citas"])
+    _app.include_router(especialistas_router, prefix=settings.API_V1_STR, tags=["Especialistas"])
     
     return _app
 
