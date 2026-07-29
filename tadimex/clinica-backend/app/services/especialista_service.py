@@ -1,9 +1,10 @@
-from typing import List
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 
 from app.models.sql.especialista import Especialista
 from app.models.sql.empleado import Empleado
+from app.models.sql.area import Area  
 from app.schemas.especialista import (
     EspecialistaCreateSchema,
     EspecialistaUpdateSchema,
@@ -20,7 +21,14 @@ def create_especialista(db: Session, especialista_data: EspecialistaCreateSchema
                 detail=f"El empleado con ID {especialista_data.empleado_id} no existe."
             )
 
-        # 2. Verificar si el empleado ya está registrado como especialista
+        area = db.query(Area).filter(Area.id == especialista_data.area_id).first()
+        if not area:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"El área médica con ID {especialista_data.area_id} no existe."
+            )
+
+        # 3. Verificar si el empleado ya está registrado como especialista
         existente = db.query(Especialista).filter(Especialista.empleado_id == especialista_data.empleado_id).first()
         if existente:
             raise HTTPException(
@@ -28,7 +36,7 @@ def create_especialista(db: Session, especialista_data: EspecialistaCreateSchema
                 detail="Este empleado ya está registrado como especialista."
             )
 
-        # 3. Crear el nuevo especialista
+        # 4. Crear el nuevo especialista
         especialista_dict = especialista_data.model_dump(exclude_unset=True)
         nuevo_especialista = Especialista(**especialista_dict)
 
@@ -64,10 +72,19 @@ def get_especialista(db: Session, especialista_id: int) -> EspecialistaReadSchem
             detail=f"Error al obtener el especialista: {str(e)}"
         )
 
-def get_all_especialistas(db: Session, skip: int = 0, limit: int = 100) -> List[EspecialistaReadSchema]:
+def get_all_especialistas(
+    db: Session, area_id: int, skip: int = 0, limit: int = 100
+) -> List[EspecialistaReadSchema]:
     try:
-        especialistas = db.query(Especialista).offset(skip).limit(limit).all()
-        return [EspecialistaReadSchema.model_validate(especialista) for especialista in especialistas]
+        # Filtra estrictamente por el área seleccionada
+        especialistas = (
+            db.query(Especialista)
+            .filter(Especialista.area_id == area_id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+        return [EspecialistaReadSchema.model_validate(e) for e in especialistas]
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -84,6 +101,14 @@ def update_especialista(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Especialista con ID {especialista_id} no encontrado."
             )
+
+        if especialista_data.area_id is not None:
+            area = db.query(Area).filter(Area.id == especialista_data.area_id).first()
+            if not area:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"El área médica con ID {especialista_data.area_id} no existe."
+                )
 
         update_data = especialista_data.model_dump(exclude_unset=True)
         for key, value in update_data.items():

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from app.db.mariadb import get_db
 from app.schemas.especialista import (
@@ -22,9 +22,10 @@ router = APIRouter()
 def obtener_especialistas(
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=100, ge=1),
+    area_id: int = Query(default=None, description="Filtrar especialistas por ID de área"),
     db: Session = Depends(get_db)
 ):
-    return get_all_especialistas(db, skip, limit)
+    return get_all_especialistas(db, skip=skip, limit=limit, area_id=area_id)
 
 @router.get("/especialistas/{especialista_id}", response_model=EspecialistaReadSchema)
 def obtener_especialista(especialista_id: int, db: Session = Depends(get_db)):

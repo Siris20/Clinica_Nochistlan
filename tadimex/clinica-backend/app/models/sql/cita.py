@@ -28,7 +28,7 @@ class Cita(Base):
     fecha_inicio = Column(DateTime, nullable=False)
     fecha_fin = Column(DateTime, nullable=False)
     motivo = Column(String(255), nullable=True)
-    estado = Column(SQLEnum(EstadoCita), default=EstadoCita.PENDIENTE, nullable=False)
+    estado = Column(SQLEnum(EstadoCita), default=EstadoCita.PROGRAMADA, nullable=False)
     observaciones = Column(Text, nullable=True)
     
     # Solución al deprecado datetime.utcnow
