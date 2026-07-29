@@ -14,7 +14,7 @@ export const CustomOffCanvasContent = () => {
       <nav className="offcanvas-header">
         <div className="logo-container d-flex align-items-center">
           <a href="/">
-            <img src="images/tadimex.png" alt="Tadimex" className="header-logo" />
+            <img src="images/ClinicaNochistlan_logo.png" alt="ClinicaLogo" className="header-logo" />
           </a>
         </div>
       </nav>

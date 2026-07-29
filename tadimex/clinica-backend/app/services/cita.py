@@ -1,9 +1,12 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
 from datetime import datetime
+from typing import List, Optional
 from fastapi import HTTPException, status
+from sqlalchemy import and_, or_
+from sqlalchemy.orm import Session
+
 from app.models.sql.cita import Cita, EstadoCita
 from app.schemas.cita import CitaCreateSchema, CitaUpdateSchema
+
 
 def verificar_disponibilidad(
     db: Session, 
@@ -11,28 +14,20 @@ def verificar_disponibilidad(
     area_id: int, 
     fecha_inicio: datetime, 
     fecha_fin: datetime, 
-    excluir_cita_id: int = None
+    excluir_cita_id: Optional[int] = None
 ) -> bool:
-    """
-    Verifica si existe un traslape de horario en la misma sucursal y área.
-    Retorna True si el horario está disponible, False si ya está ocupado.
-    """
-    # Consulta para buscar citas que se empalmen en el rango de tiempo solicitado
+    """Verifica si existe un traslape de horario en la misma sucursal y área."""
     query = db.query(Cita).filter(
         Cita.sucursal_id == sucursal_id,
         Cita.area_id == area_id,
-        Cita.estado != EstadoCita.CANCELADA,  # Las citas canceladas liberan el espacio
+        Cita.estado != EstadoCita.CANCELADA,
         or_(
-            # Caso 1: La nueva cita empieza dentro de una existente
             and_(Cita.fecha_inicio <= fecha_inicio, Cita.fecha_fin > fecha_inicio),
-            # Caso 2: La nueva cita termina dentro de una existente
             and_(Cita.fecha_inicio < fecha_fin, Cita.fecha_fin >= fecha_fin),
-            # Caso 3: La nueva cita engloba completamente a una existente
             and_(Cita.fecha_inicio >= fecha_inicio, Cita.fecha_fin <= fecha_fin)
         )
     )
 
-    # Si estamos actualizando, ignoramos la cita actual para que no choque consigo misma
     if excluir_cita_id:
         query = query.filter(Cita.id != excluir_cita_id)
 
@@ -41,7 +36,7 @@ def verificar_disponibilidad(
 
 
 def create_cita(db: Session, cita_data: CitaCreateSchema) -> Cita:
-    """Crea una nueva cita validando que el horario esté libre."""
+    """Crea una nueva cita validando disponibilidad."""
     disponible = verificar_disponibilidad(
         db, 
         sucursal_id=cita_data.sucursal_id, 
@@ -60,6 +55,7 @@ def create_cita(db: Session, cita_data: CitaCreateSchema) -> Cita:
         cliente_id=cita_data.cliente_id,
         area_id=cita_data.area_id,
         sucursal_id=cita_data.sucursal_id,
+        especialista_id=cita_data.especialista_id,
         fecha_inicio=cita_data.fecha_inicio,
         fecha_fin=cita_data.fecha_fin,
         motivo=cita_data.motivo,
@@ -69,21 +65,19 @@ def create_cita(db: Session, cita_data: CitaCreateSchema) -> Cita:
     db.add(nueva_cita)
     db.commit()
     db.refresh(nueva_cita)
-    # Cargar explícitamente las relaciones para la serialización
-    db.refresh(nueva_cita, ["cliente", "area", "sucursal"])
+    db.refresh(nueva_cita, ["cliente", "area", "sucursal", "especialista"])
     return nueva_cita
 
 
 def get_cita(db: Session, cita_id: int) -> Cita:
-    """Obtiene una cita específica por su ID."""
+    """Obtiene una cita por ID."""
     cita = db.query(Cita).filter(Cita.id == cita_id).first()
     if not cita:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
             detail="Cita no encontrada."
         )
-    # Cargar explícitamente las relaciones para la serialización
-    db.refresh(cita, ["cliente", "area", "sucursal"])
+    db.refresh(cita, ["cliente", "area", "sucursal", "especialista"])
     return cita
 
 
@@ -91,13 +85,10 @@ def get_citas_rango(
     db: Session, 
     fecha_desde: datetime, 
     fecha_hasta: datetime, 
-    sucursal_id: int = None, 
-    area_id: int = None
-):
-    """
-    Obtiene las citas dentro de un rango de fechas para pintar en el calendario del dashboard.
-    Permite filtrar opcionalmente por sucursal y área médica.
-    """
+    sucursal_id: Optional[int] = None, 
+    area_id: Optional[int] = None
+) -> List[Cita]:
+    """Obtiene las citas para un rango de tiempo."""
     query = db.query(Cita).filter(
         Cita.fecha_inicio >= fecha_desde,
         Cita.fecha_fin <= fecha_hasta
@@ -112,10 +103,9 @@ def get_citas_rango(
 
 
 def update_cita(db: Session, cita_id: int, cita_data: CitaUpdateSchema) -> Cita:
-    """Actualiza los datos de la cita validando la disponibilidad de horario si cambió."""
+    """Actualiza la cita comprobando horario."""
     db_cita = get_cita(db, cita_id)
     
-    # Verificar si REALMENTE cambió alguno de estos campos críticos
     cambio_horario = (
         (cita_data.fecha_inicio is not None and cita_data.fecha_inicio != db_cita.fecha_inicio) or
         (cita_data.fecha_fin is not None and cita_data.fecha_fin != db_cita.fecha_fin) or
@@ -123,7 +113,6 @@ def update_cita(db: Session, cita_id: int, cita_data: CitaUpdateSchema) -> Cita:
         (cita_data.sucursal_id is not None and cita_data.sucursal_id != db_cita.sucursal_id)
     )
 
-    # Solo validar disponibilidad si realmente cambió el horario, área o sucursal
     if cambio_horario:
         sucursal = cita_data.sucursal_id if cita_data.sucursal_id is not None else db_cita.sucursal_id
         area = cita_data.area_id if cita_data.area_id is not None else db_cita.area_id
@@ -144,10 +133,7 @@ def update_cita(db: Session, cita_id: int, cita_data: CitaUpdateSchema) -> Cita:
                 detail="El nuevo horario solicitado ya está ocupado."
             )
 
-    # Convertimos los datos del esquema a diccionario
     update_data = cita_data.model_dump(exclude_unset=True)
-    
-    # SEGURIDAD: Evita intentar modificar la llave primaria "id" en el modelo de la base de datos
     update_data.pop("id", None)
     
     for key, value in update_data.items():
@@ -156,16 +142,16 @@ def update_cita(db: Session, cita_id: int, cita_data: CitaUpdateSchema) -> Cita:
     db.commit()
     db.refresh(db_cita)
     
-    # Forzamos la carga segura de relaciones de forma interna en lugar de usar db.refresh(db_cita, ["cliente", ...])
     _ = db_cita.cliente
     _ = db_cita.area
     _ = db_cita.sucursal
+    _ = db_cita.especialista
     
     return db_cita
 
 
 def delete_cita(db: Session, cita_id: int):
-    """Elimina una cita físicamente de la base de datos."""
+    """Elimina físicamente la cita de la BD."""
     db_cita = get_cita(db, cita_id)
     db.delete(db_cita)
     db.commit()

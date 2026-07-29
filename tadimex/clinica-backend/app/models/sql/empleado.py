@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from .area import Area
     from .sucursal import Sucursal
     from .usuario import Usuario
+    from .especialista import Especialista
     from .movimiento_inventario import MovimientoInventario
 
     
@@ -114,6 +115,13 @@ class Empleado(Base):
 
     usuario: Mapped[Optional["Usuario"]] = relationship(
         "Usuario", 
+        back_populates="empleado", 
+        uselist=False
+    )
+    
+    # Relación 1:1 con Especialista (uselist=False para indicar que no es lista)
+    especialista: Mapped[Optional["Especialista"]] = relationship(
+        "Especialista", 
         back_populates="empleado", 
         uselist=False
     )

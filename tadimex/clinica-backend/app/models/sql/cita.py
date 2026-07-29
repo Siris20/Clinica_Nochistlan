@@ -1,41 +1,51 @@
-from sqlalchemy import Integer, ForeignKey, DateTime, Text, Enum
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.models.sql.base import Base
-from datetime import datetime
-from typing import Optional, TYPE_CHECKING
 import enum
+from datetime import datetime, timezone
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum as SQLEnum, Text
+from sqlalchemy.orm import relationship
+from app.models.sql.base import Base
 
-# Usamos TYPE_CHECKING para evitar que Python intente importar estos archivos
-# en tiempo de ejecución, lo que rompe el sistema con un error 500.
-if TYPE_CHECKING:
-    from app.models.sql.cliente import Cliente
-    from app.models.sql.area import Area
-    from app.models.sql.sucursal import Sucursal
 
 class EstadoCita(str, enum.Enum):
-    PENDIENTE = "Pendiente"
-    CONFIRMADA = "Confirmada"
-    CANCELADA = "Cancelada"
-    COMPLETADA = "Completada"
+    PROGRAMADA = "PROGRAMADA"
+    CONFIRMADA = "CONFIRMADA"
+    PENDIENTE = "PENDIENTE"
+    CANCELADA = "CANCELADA"
+    COMPLETADA = "COMPLETADA"
+    NO_ASISTIO = "NO_ASISTIO"
+
 
 class Cita(Base):
     __tablename__ = "citas"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, index=True)
     
-    cliente_id: Mapped[int] = mapped_column(Integer, ForeignKey("clientes.id", ondelete="CASCADE"), nullable=False)
-    area_id: Mapped[int] = mapped_column(Integer, ForeignKey("areas.id", ondelete="RESTRICT"), nullable=False)
-    sucursal_id: Mapped[int] = mapped_column(Integer, ForeignKey("sucursales.id", ondelete="RESTRICT"), nullable=False)
+    # Llaves Foráneas
+    cliente_id = Column(Integer, ForeignKey("clientes.id"), nullable=False)
+    area_id = Column(Integer, ForeignKey("areas.id"), nullable=False)
+    sucursal_id = Column(Integer, ForeignKey("sucursales.id"), nullable=False)
+    especialista_id = Column(Integer, ForeignKey("especialistas.id"), nullable=False)
     
-    fecha_inicio: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
-    fecha_fin: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
+    fecha_inicio = Column(DateTime, nullable=False)
+    fecha_fin = Column(DateTime, nullable=False)
+    motivo = Column(String(255), nullable=True)
+    estado = Column(SQLEnum(EstadoCita), default=EstadoCita.PROGRAMADA, nullable=False)
+    observaciones = Column(Text, nullable=True)
     
-    motivo: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    estado: Mapped[EstadoCita] = mapped_column(Enum(EstadoCita), default=EstadoCita.PENDIENTE, nullable=False)
-    observaciones: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    # Solución al deprecado datetime.utcnow
+    created_at = Column(
+        DateTime, 
+        default=lambda: datetime.now(timezone.utc), 
+        nullable=False
+    )
+    updated_at = Column(
+        DateTime, 
+        default=lambda: datetime.now(timezone.utc), 
+        onupdate=lambda: datetime.now(timezone.utc), 
+        nullable=False
+    )
 
-    # NOTA CRÍTICA: Definir el destino como un String ("Cliente", "Area", "Sucursal")
-    # evita que SQLAlchemy necesite importar físicamente el archivo de inmediato.
-    cliente: Mapped["Cliente"] = relationship("Cliente", back_populates="citas")
-    area: Mapped["Area"] = relationship("Area", back_populates="citas")
-    sucursal: Mapped["Sucursal"] = relationship("Sucursal", back_populates="citas")
+    # Relaciones ORM
+    cliente = relationship("Cliente", back_populates="citas")
+    area = relationship("Area", back_populates="citas")
+    sucursal = relationship("Sucursal", back_populates="citas")
+    especialista = relationship("Especialista", back_populates="citas")

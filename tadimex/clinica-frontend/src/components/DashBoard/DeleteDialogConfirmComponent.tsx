@@ -2,10 +2,24 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, T
 import React, { useState } from 'react'
 import { useAuth } from "../../context/AuthContext";
 
-export const DeleteDialogConfirmComponent = ({title, message, deleteDialogOpen, handleCloseDeleteDialog, handleDelete}) => {
+interface DeleteDialogConfirmComponentProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title?: string;
+  message?: string;
+}
+
+export const DeleteDialogConfirmComponent: React.FC<DeleteDialogConfirmComponentProps> = ({
+  open,
+  onClose,
+  onConfirm,
+  title = 'Confirmar eliminación',
+  message = '¿Estás seguro de eliminar este registro? Esta acción no se puede deshacer.',
+}) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { user, employeeData } = useAuth();
+  const { employeeData } = useAuth();
 
   const handleConfirmDelete = async () => {
     try {
@@ -19,9 +33,9 @@ export const DeleteDialogConfirmComponent = ({title, message, deleteDialogOpen, 
           password: password
         }),
       });
-  
+
       if (response.ok) {
-        handleDelete();
+        onConfirm();
         handleClose();
       } else {
         setError('Contraseña incorrecta');
@@ -34,11 +48,21 @@ export const DeleteDialogConfirmComponent = ({title, message, deleteDialogOpen, 
   const handleClose = () => {
     setPassword('');
     setError('');
-    handleCloseDeleteDialog();
+    onClose();
   };
 
   return (
-    <Dialog open={deleteDialogOpen} onClose={handleClose}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="xs"
+      disableAutoFocus
+      disableEnforceFocus
+      disableRestoreFocus
+      PaperProps={{ sx: { zIndex: 1500 } }}
+      BackdropProps={{ sx: { zIndex: 1400 } }}
+    >
       <form onSubmit={(e) => {
         e.preventDefault();
         handleConfirmDelete();

@@ -29,6 +29,7 @@ from app.models.sql.producto_vendido import ProductoVendido
 from app.models.sql.proveedor import Proveedor
 from app.models.sql.inventario import Inventarios
 from app.models.sql.cita import Cita
+from app.models.sql.especialista import Especialista
 
 __all__ = [
     "Base",
@@ -65,5 +66,6 @@ __all__ = [
     "SalidaInventario",
     "SalidaVenta",
     "ProductoVendido",
-    "Cita"
+    "Cita",
+    "Especialista"
 ]
