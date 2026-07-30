@@ -1,0 +1,217 @@
+/* ==========================================
+   CONTAINER Y FONDO BLANCO
+   ========================================== */
+.header-container {
+  width: 100%;
+  padding: 12px 32px;
+  background-color: #ffffff; /* Fondo blanco puro */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Sombra suave de separación */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Distribuye espacio: Izq (Logo), Centro (Nav), Der (CTA/Redes) */
+  max-width: 1300px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ==========================================
+   LOGO Y NOMBRE DE MARCA
+   ========================================== */
+.logo-container {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0; /* Previene que el logo se encoja */
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.header-logo {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-title {
+  color: #1e40af; /* Azul principal médico */
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+/* ==========================================
+   ESTILOS PARA <NavBarContent />
+   ========================================== */
+/* Contenedor Flex principal dentro del NavBarContent */
+.header-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  margin-left: 32px;
+}
+
+/* Grupo central: Links de Navegación */
+.header-links-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  margin: 0 auto; /* Empuja los enlaces exactamente al centro */
+}
+
+/* Grupo derecho: Redes sociales y Botón */
+.header-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-left: auto; /* Garantiza que este bloque se pegue a la derecha */
+}
+
+/* Estilo para los textos de navegación */
+.header-link,
+.header-link-catalogues {
+  text-decoration: none;
+  color: #334155;
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+  padding: 4px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.header-link:hover,
+.header-link-catalogues:hover,
+.active-link {
+  color: #00a884; /* Verde turquesa en hover y activo */
+}
+
+.header-link::after,
+.header-link-catalogues::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #00a884;
+  transition: width 0.2s ease, left 0.2s ease;
+}
+
+.header-link:hover::after,
+.header-link-catalogues:hover::after,
+.active-link::after {
+  width: 100%;
+  left: 0;
+}
+
+/* ==========================================
+   REDES SOCIALES Y BOTÓN CTA (DERECHA)
+   ========================================== */
+.social-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.social-icon-link {
+  color: #1e40af; /* Iconos azul marino */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.social-icon-link:hover {
+  background-color: #f1f5f9;
+  color: #00a884;
+  transform: translateY(-1px);
+}
+
+.btn-iniciar-sesion {
+  background-color: #00a884; /* Botón turquesa */
+  color: #ffffff !important;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.btn-iniciar-sesion:hover {
+  background-color: #008f70;
+}
+
+/* ==========================================
+   MENÚ OFFCANVAS MÓVIL
+   ========================================== */
+.offcanvas-header {
+  padding: 1.25rem 1rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Logo más grande y centrado dentro del Offcanvas */
+.offcanvas-logo {
+  max-height: 58px; /* Ajusta este valor si deseas mayor tamaño */
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.offcanvas-logo:hover {
+  transform: scale(1.03);
+}
+
+.offcanvas-body .list-group-item {
+  border: none;
+  padding: 0.85rem 1rem;
+  color: #1e40af;
+  font-weight: 500;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.offcanvas-body .list-group-item:hover {
+  background-color: #eff6ff;
+}
+
+.offcanvas-body .social-links {
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+@media (max-width: 992px) {
+  .logo-container {
+    width: auto;
+  }
+
+  .header-nav-container,
+  .header-nav {
+    display: none;
+  }
+}

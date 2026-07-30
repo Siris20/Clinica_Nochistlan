@@ -1,0 +1,158 @@
+# Entornos virtuales y configuración
+venv/
+venv_new/
+env/
+.env
+.venv/
+.python-version
+pip-selfcheck.json
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+Dockerfile
+MANIFEST
+
+# Archivos de prueba y cobertura
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Archivos de logs y datos temporales
+*.log
+logs/
+log/
+*.tmp
+.temp/
+.tmp/
+tmp/
+
+# Archivos específicos de Tadimex
+## Cotizaciones generadas
+static/cotizaciones/*.pdf
+static/cotizaciones/temp/
+
+## Logos de emisores (mantener la carpeta pero no los archivos)
+static/logos/*
+!static/logos/.gitkeep
+
+## Archivos de uploads temporales
+static/uploads/*
+!static/uploads/.gitkeep
+
+## Archivos de WhatsApp
+.wwebjs_auth/
+.wwebjs_cache/
+whatsapp_sessions/
+whatsapp_media/
+
+## Archivos de Scraping
+browsers/
+playwright-downloads/
+chromedriver
+geckodriver
+selenium_screenshots/
+scraping_cache/
+
+## Bases de datos locales
+*.sqlite3
+*.db
+*.sqlite
+
+# Archivos de configuración local
+instance/
+.env.local
+.env.*.local
+config.local.py
+
+# Directorios de IDEs y editores
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+.project
+.pydevproject
+.settings/
+*.swp
+*.swo
+*~
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+.directory
+$RECYCLE.BIN/
+Desktop.ini
+
+# Archivos de documentación generados
+docs/_build/
+site/
+
+# Archivos de dependencias de frontend (si se incluyen en el mismo repo)
+node_modules/
+bower_components/
+
+# Archivos de variables de entorno
+.env.*
+!.env.example
+
+# Archivos de certificados y secretos
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# Archivos de backup
+*.bak
+*.swp
+*.swo
+*~.nib
+*.save
+*.old
+
+# Archivos de migración de Alembic (excepto el directorio y el archivo init)
+alembic/**/__pycache__/
+alembic/**/*.pyc
+
+# Archivos de caché de MongoDB
+.mongodb/
+mongosh/
+
+# Archivos Excel temporales
+~$*.xlsx
+~$*.xls
+*.xlk
+
+# Archivos de respaldo automático
+*.autosave
