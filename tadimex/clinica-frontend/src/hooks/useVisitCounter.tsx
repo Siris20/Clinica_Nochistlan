@@ -75,7 +75,7 @@ export const useVisitCounter = () => {
     }
     
     // En desarrollo (localhost), usar el dominio configurado o fallback
-    return 'tadimex.mx';
+    return 'https://hospitaldeespecialidadesnochistlan.com/';
 
   };
 
