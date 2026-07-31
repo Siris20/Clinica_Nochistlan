@@ -58,7 +58,7 @@ export const DashboardComponent = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [modoEdicion, setModoEdicion] = useState<boolean>(false);
   const [openConfirmDelete, setOpenConfirmDelete] = useState<boolean>(false);
-
+  const [modalError, setModalError] = useState<string | null>(null);
   const [formCita, setFormCita] = useState<any>({
     id: null,
     cliente_id: "",
@@ -110,25 +110,31 @@ export const DashboardComponent = () => {
   };
 
   const handleGuardarCita = async () => {
-    try {
-      const payload: any = {
-        cliente_id: parseInt(formCita.cliente_id, 10),
-        area_id: parseInt(formCita.area_id, 10),
-        especialista_id: parseInt(formCita.especialista_id, 10),
-        sucursal_id: SUCURSAL_ACTIVA_ID,
-        fecha_inicio: moment(formCita.fecha_inicio).format("YYYY-MM-DDTHH:mm:ss"),
-        fecha_fin: moment(formCita.fecha_fin).format("YYYY-MM-DDTHH:mm:ss"),
-        motivo: formCita.motivo,
-        observaciones: formCita.observaciones,
-        ...(modoEdicion && { estado: formCita.estado }),
-      };
+  setModalError(null); 
+  try {
+    const payload: any = {
+      cliente_id: parseInt(formCita.cliente_id, 10),
+      area_id: parseInt(formCita.area_id, 10),
+      especialista_id: parseInt(formCita.especialista_id, 10),
+      sucursal_id: SUCURSAL_ACTIVA_ID,
+      fecha_inicio: moment(formCita.fecha_inicio).format("YYYY-MM-DDTHH:mm:ss"),
+      fecha_fin: moment(formCita.fecha_fin).format("YYYY-MM-DDTHH:mm:ss"),
+      motivo: formCita.motivo,
+      observaciones: formCita.observaciones,
+      ...(modoEdicion && { estado: formCita.estado }),
+    };
 
-      await handleSaveCita(payload, modoEdicion, formCita.id);
-      setOpenModal(false);
-    } catch (err: any) {
-      alert("Error al guardar: " + (err?.message || "Error desconocido"));
-    }
-  };
+    await handleSaveCita(payload, modoEdicion, formCita.id);
+    setOpenModal(false);
+  } catch (err: any) {
+    const apiErrorMessage = 
+      err?.response?.data?.detail || 
+      err?.message || 
+      "Error al procesar la cita.";
+
+    setModalError(apiErrorMessage); 
+  }
+};
 
   return (
     <Box sx={{ flexGrow: 1, padding: 2 }}>
@@ -201,6 +207,7 @@ export const DashboardComponent = () => {
         especialistas={especialistas || []}
         clientsLoading={clientsLoading}
         areasLoading={areasLoading}
+        apiError={modalError}
       />
 
       {/* Modal de Confirmación para Eliminar */}

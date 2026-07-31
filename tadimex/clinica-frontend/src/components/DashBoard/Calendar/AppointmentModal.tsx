@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -13,6 +13,8 @@ import {
   Button,
   Box,
   SelectChangeEvent,
+  FormHelperText,
+  Alert,
 } from "@mui/material";
 import { Specialist } from "./SpecialistSelector";
 
@@ -41,6 +43,7 @@ interface AppointmentModalProps {
   especialistas: Specialist[];
   clientsLoading?: boolean;
   areasLoading?: boolean;
+  apiError?: string | null; // Propietario del mensaje recibido desde el backend
 }
 
 const formatToDatetimeLocal = (date: Date | string | null): string => {
@@ -63,21 +66,58 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
   especialistas = [],
   clientsLoading = false,
   areasLoading = false,
+  apiError = null, // 1. Recibes apiError aquí
 }) => {
+  // Estado para controlar la validación visual
+  const [touched, setTouched] = useState<boolean>(false);
+
+  // Reinicia la validación cada vez que se abre/cierra el modal
+  useEffect(() => {
+    if (!open) {
+      setTouched(false);
+    }
+  }, [open]);
+
+  // Validaciones
+  const isClienteInvalid = touched && !formCita.cliente_id;
+  const isAreaInvalid = touched && !formCita.area_id;
+  const isEspecialistaInvalid = touched && !formCita.especialista_id;
+  const isMotivoInvalid = touched && !formCita.motivo?.trim();
+
+  // Función interceptora al presionar Guardar/Agendar
+  const handleSaveClick = () => {
+    setTouched(true);
+
+    // Si algún campo requerido está vacío, detiene la ejecución
+    if (!formCita.cliente_id || !formCita.area_id || !formCita.especialista_id || !formCita.motivo?.trim()) {
+      return;
+    }
+
+    onSave();
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ fontWeight: "bold" }}>
         {modoEdicion ? "Detalles y Reagendación de Cita" : "Registrar Nueva Cita"}
       </DialogTitle>
       <DialogContent dividers>
+        
+        {/* 2. Si hay un error del backend (como horario ocupado), se despliega esta alerta */}
+        {apiError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {apiError}
+          </Alert>
+        )}
+
         <Grid container spacing={2} sx={{ mt: 0.5 }}>
           {/* Paciente */}
           <Grid item xs={12}>
-            <FormControl fullWidth size="small" disabled={modoEdicion || clientsLoading}>
-              <InputLabel>Paciente</InputLabel>
+            <FormControl fullWidth size="small" disabled={modoEdicion || clientsLoading} error={isClienteInvalid}>
+              <InputLabel>Paciente *</InputLabel>
               <Select
                 value={formCita.cliente_id}
-                label="Paciente"
+                label="Paciente *"
                 onChange={(e: SelectChangeEvent) =>
                   setFormCita({ ...formCita, cliente_id: e.target.value })
                 }
@@ -86,16 +126,17 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
                   <MenuItem key={cli.id} value={cli.id}>{cli.nombre_fiscal}</MenuItem>
                 ))}
               </Select>
+              {isClienteInvalid && <FormHelperText>Por favor selecciona un paciente</FormHelperText>}
             </FormControl>
           </Grid>
 
           {/* Área */}
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth size="small" disabled={areasLoading}>
-              <InputLabel>Área Médica</InputLabel>
+            <FormControl fullWidth size="small" disabled={areasLoading} error={isAreaInvalid}>
+              <InputLabel>Área Médica *</InputLabel>
               <Select
                 value={formCita.area_id}
-                label="Área Médica"
+                label="Área Médica *"
                 onChange={(e: SelectChangeEvent) =>
                   setFormCita({ ...formCita, area_id: e.target.value })
                 }
@@ -104,16 +145,17 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
                   <MenuItem key={area.id} value={area.id}>{area.name}</MenuItem>
                 ))}
               </Select>
+              {isAreaInvalid && <FormHelperText>El área médica es requerida</FormHelperText>}
             </FormControl>
           </Grid>
 
           {/* Especialista */}
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Especialista</InputLabel>
+            <FormControl fullWidth size="small" error={isEspecialistaInvalid}>
+              <InputLabel>Especialista *</InputLabel>
               <Select
                 value={formCita.especialista_id}
-                label="Especialista"
+                label="Especialista *"
                 onChange={(e: SelectChangeEvent) =>
                   setFormCita({ ...formCita, especialista_id: e.target.value })
                 }
@@ -124,6 +166,7 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
                   </MenuItem>
                 ))}
               </Select>
+              {isEspecialistaInvalid && <FormHelperText>Selecciona un especialista</FormHelperText>}
             </FormControl>
           </Grid>
 
@@ -188,8 +231,10 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
             <TextField
               fullWidth
               size="small"
-              label="Motivo de la Consulta"
+              label="Motivo de la Consulta *"
               value={formCita.motivo}
+              error={isMotivoInvalid}
+              helperText={isMotivoInvalid ? "El motivo de la consulta es obligatorio" : ""}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setFormCita({ ...formCita, motivo: e.target.value })
               }
@@ -220,7 +265,7 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
         </Box>
         <Box sx={{ display: "flex", gap: 1 }}>
           <Button onClick={onClose} color="inherit">Cancelar</Button>
-          <Button onClick={onSave} variant="contained" color="primary">
+          <Button onClick={handleSaveClick} variant="contained" color="primary">
             {modoEdicion ? "Guardar Cambios" : "Agendar Cita"}
           </Button>
         </Box>
