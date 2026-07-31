@@ -14,6 +14,7 @@ from app.api.v1.categorias_productos.routes import router as categoria_producto_
 from app.api.v1.subcategorias_productos.routes import router as subcategoria_producto_router
 from app.api.v1.productos.routes import router as producto_router
 from app.api.v1.clientes.routes import router as cliente_router
+from app.api.v1.pacientes.routes import router as paciente_router
 from app.api.v1.emisores.routes import router as emisor_router
 from app.api.v1.logos.routes import router as logo_router
 from app.api.v1.cotizaciones.routes import router as cotizacion_router
@@ -40,7 +41,6 @@ def get_application():
         version=settings.VERSION
     )
 
-    
     def custom_openapi():
         if _app.openapi_schema:
             return _app.openapi_schema
@@ -52,7 +52,6 @@ def get_application():
             routes=_app.routes,
         )
         
-        
         openapi_schema["components"]["securitySchemes"] = {
             "bearerAuth": {  
                 "type": "http",
@@ -61,15 +60,12 @@ def get_application():
             }
         }
         
-       
         openapi_schema["security"] = [{"bearerAuth": []}]
         
         _app.openapi_schema = openapi_schema
         return _app.openapi_schema
 
-    
     _app.openapi = custom_openapi
-    
     
     if settings.BACKEND_CORS_ORIGINS:
         _app.add_middleware(
@@ -82,7 +78,6 @@ def get_application():
 
     _app.mount("/static", StaticFiles(directory="static"), name="static")
     
-    
     @_app.get("/", tags=["root"])
     def read_root():
         return {
@@ -93,8 +88,6 @@ def get_application():
             "debug": settings.DEBUG
         }
 
-    
-    
     _app.include_router(empresa_router, prefix=settings.API_V1_STR, tags=["empresas"])
     _app.include_router(sucursal_router, prefix=settings.API_V1_STR, tags=["sucursales"])
     _app.include_router(almacen_router, prefix=settings.API_V1_STR, tags=["almacenes"])
@@ -104,6 +97,7 @@ def get_application():
     _app.include_router(producto_router, prefix=settings.API_V1_STR, tags=["productos"])
     _app.include_router(concepto_sat_router, prefix=settings.API_V1_STR, tags=["conceptos SAT"])
     _app.include_router(cliente_router, prefix=settings.API_V1_STR, tags=["clientes"])
+    _app.include_router(paciente_router, prefix=settings.API_V1_STR, tags=["pacientes"])
     _app.include_router(emisor_router, prefix=settings.API_V1_STR, tags=["emisores"])
     _app.include_router(logo_router, prefix=settings.API_V1_STR, tags=["logos"])
     _app.include_router(cotizacion_router, prefix=settings.API_V1_STR, tags=["cotizaciones"])
@@ -123,5 +117,3 @@ def get_application():
     return _app
 
 app = get_application()
-
-# comntario de prueba
