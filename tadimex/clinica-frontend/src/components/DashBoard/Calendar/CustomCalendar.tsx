@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/es";
@@ -45,6 +45,8 @@ export const CustomCalendar: React.FC<CustomCalendarProps> = ({
   onSelectSlot,
   onSelectEvent,
 }) => {
+  const [currentView, setCurrentView] = useState<"month" | "day" | "agenda">("month");
+
   const eventStyleGetter = (event: any) => {
     const estado = event.estado || "PENDIENTE";
     const colores = COLORES_ESTADO[estado] || { bg: "#3174ad", text: "#ffffff" };
@@ -70,6 +72,10 @@ export const CustomCalendar: React.FC<CustomCalendarProps> = ({
       endAccessor="end"
       style={{ height: 600 }}
       selectable
+      view={currentView}
+      onView={setCurrentView}
+      defaultView="month"
+      views={["month", "day", "agenda"]}
       onSelectSlot={onSelectSlot}
       onSelectEvent={onSelectEvent}
       components={{ toolbar: CustomToolbar }}

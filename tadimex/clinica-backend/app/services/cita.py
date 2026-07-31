@@ -48,7 +48,7 @@ def create_cita(db: Session, cita_data: CitaCreateSchema) -> Cita:
     if not disponible:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="El horario seleccionado ya está ocupado para esta área en la sucursal."
+            detail="El horario seleccionado ya está ocupado por otro especialista del area."
         )
         
     nueva_cita = Cita(

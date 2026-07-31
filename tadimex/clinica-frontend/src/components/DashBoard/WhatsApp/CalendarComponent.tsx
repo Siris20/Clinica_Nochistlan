@@ -1,4 +1,5 @@
 import moment from "moment";
+import "moment/locale/es";
 import React, { useEffect, useState } from "react";
 import { momentLocalizer, Calendar } from "react-big-calendar";
 import { UseCalendar } from "../../../hooks/UseCalendar";
@@ -51,6 +52,7 @@ const CustomToolbar = (toolbar) => {
 
 export const CalendarComponent = () => {
   const { handleGetEvents, myEvents, loadingEvents } = UseCalendar();
+  const [currentView, setCurrentView] = useState<"month" | "day" | "agenda">("month");
 
     const [open, setOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<{
@@ -92,9 +94,22 @@ export const CalendarComponent = () => {
           events={myEvents}
           startAccessor="start"
           endAccessor="end"
+          view={currentView}
+          onView={setCurrentView}
+          defaultView="month"
+          views={["month", "day", "agenda"]}
           style={{ height: 500 }}
           components={{
             toolbar: CustomToolbar,
+          }}
+          messages={{
+            next: "Sig.",
+            previous: "Ant.",
+            today: "Hoy",
+            month: "Mes",
+            week: "Semana",
+            day: "Día",
+            agenda: "Agenda",
           }}
           onSelectEvent={handleSelectEvent}
         />
