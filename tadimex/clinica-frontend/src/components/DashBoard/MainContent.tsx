@@ -1,33 +1,33 @@
-import { AppBar, Box, Tabs, Tab, Toolbar, Typography } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { AppBar, Box, Tabs, Tab, Typography, Paper } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { DashboardComponent } from "./DashboardComponent";
+import ConstructionIcon from "@mui/icons-material/Construction";
+
 import { DrawerComponent } from "./DrawerComponent";
+import { DashboardComponent } from "./DashboardComponent";
 import { StorageComponent } from "./Storage/StorageComponent";
-import { SeoComponent } from "./SEO/SeoComponent";
-import { WhatsAppComponent } from "./WhatsApp/WhatsAppComponent";
 import { SystemUserComponent } from "./SystemsUser/SystemUserComponent";
 import { EmployeeComponent } from "./Employee/EmployeeComponent";
 import { BranchesManagementComponent } from "./BranchesManagement/BranchesManagementComponent";
 import { EnterprisesManagementComponent } from "./Enterprises/EnterprisesManagementComponent";
-import { ClasificationsComponent } from "./Clasifications/ClasificationsComponent";
 import { ProductsComponent } from "./Products/ProductsComponent";
 import { AreasManagementComponent } from "./Areas/AreasManagementComponent";
 import { ClientsComponent } from "./Clients/ClientsComponent";
-import { EmittersComponent } from "./Emitters/EmittersComponent";
 import { QuotesComponent } from "./Quotes/QuotesComponent";
-import { LogosComponent } from "./Logos/LogosComponent";
-import { StockComponent } from "./Stock/StockComponent";
-import { SuppliersComponent } from "./Suppliers/SuppliersComponent";
 import { StatisticsComponent } from "./Statistics/StatisticsComponent";
 import { PurchasesComponent, SalesComponent } from "./Movements";
-import { UtilitiesComponent } from "./Utilities/UtilitiesComponent";
-
+import { LogosComponent } from "./Logos/LogosComponent";
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+}
+
+interface OpenTab {
+  id: string;
+  label: string;
+  content: React.ReactNode;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -43,148 +43,185 @@ function TabPanel(props: TabPanelProps) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <Typography component="div">{children}</Typography>
         </Box>
       )}
     </div>
   );
 }
 
+const ModulePlaceholder = ({ title, description }: { title: string; description: string }) => (
+  <Paper elevation={0} sx={{ p: 4, textAlign: "center", backgroundColor: "#f8f9fa", borderRadius: 2 }}>
+    <ConstructionIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
+    <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
+      {title}
+    </Typography>
+    <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600, mx: "auto", mb: 2 }}>
+      {description}
+    </Typography>
+    <Typography variant="caption" color="primary">
+      Módulo registrado correctamente en el sistema.
+    </Typography>
+  </Paper>
+);
+
 export const MainContent = () => {
-  const [openTabs, setOpenTabs] = useState<any[]>([]);
+  const [openTabs, setOpenTabs] = useState<OpenTab[]>([]);
   const [value, setValue] = useState(0);
 
-  const handleMenuItemClick = (tabIndex: number) => {
-    const tabExists =
-      openTabs.findIndex((tab) => tab.label === allTabs[tabIndex].label) !== -1;
-    if (!tabExists) {
-      setOpenTabs([...openTabs, allTabs[tabIndex]]);
-    }
-    setValue(
-      openTabs.findIndex((tab) => tab.label === allTabs[tabIndex].label) !== -1
-        ? openTabs.findIndex((tab) => tab.label === allTabs[tabIndex].label)
-        : openTabs.length
-    );
+  const ALL_MODULES: Record<string, { label: string; content: React.ReactNode }> = {
+    dashboard: {
+      label: "Inicio / Dashboard",
+      content: <DashboardComponent onMenuItemClick={(id: string) => handleMenuItemClick(id)} />,
+    },
+    pacientes: {
+      label: "Pacientes",
+      content: <ClientsComponent />,
+    },
+    citas: {
+      label: "Citas y Recepción",
+      content: <QuotesComponent />,
+    },
+    atencion_medica: {
+      label: "Atención médica",
+      content: (
+        <ModulePlaceholder
+          title="Atención Médica"
+          description="Consultas, notas médicas, signos vitales y recetas electrónicas."
+        />
+      ),
+    },
+    enfermeria: {
+      label: "Enfermería",
+      content: (
+        <ModulePlaceholder
+          title="Enfermería"
+          description="Hoja de enfermería, administración de medicamentos y control de signos vitales."
+        />
+      ),
+    },
+    hospitalizacion: {
+      label: "Hospitalización",
+      content: (
+        <ModulePlaceholder
+          title="Hospitalización"
+          description="Control de camas, ingresos, traslados y censo hospitalario."
+        />
+      ),
+    },
+    urgencias: {
+      label: "Urgencias",
+      content: (
+        <ModulePlaceholder
+          title="Urgencias"
+          description="Triage, nivel de prioridad y atención inmediata."
+        />
+      ),
+    },
+    laboratorio: {
+      label: "Lab. e Imagenología",
+      content: (
+        <ModulePlaceholder
+          title="Laboratorio e Imagenología"
+          description="Solicitudes de estudios, captura de resultados e integración de imágenes médicas."
+        />
+      ),
+    },
+    farmacia: {
+      label: "Farmacia",
+      content: <ProductsComponent />,
+    },
+    quirofano: {
+      label: "Quirófano",
+      content: (
+        <ModulePlaceholder
+          title="Quirófano"
+          description="Agenda de cirugías, médicos participantes y listas de verificación."
+        />
+      ),
+    },
+    facturacion: {
+      label: "Caja y Facturación",
+      content: <SalesComponent />,
+    },
+    almacen: {
+      label: "Almacén y Compras",
+      content: <StorageComponent />,
+    },
+    personal: {
+      label: "Personal",
+      content: <EmployeeComponent />,
+    },
+    areas_medicas: {
+      label: "Áreas Médicas",
+      content: <AreasManagementComponent />, // Módulo dedicado exclusivamente a Áreas
+    },
+    reportes: {
+      label: "Reportes",
+      content: <StatisticsComponent />,
+    },
+    configuracion: {
+      label: "Configuración",
+      content: <LogosComponent />,
+    },
+    usuarios: {
+      label: "Usuarios del Sistema",
+      content: <SystemUserComponent />,
+    },
   };
 
-  const allTabs = useMemo(
-    () => [
-      {
-        label: "Dashboard",
-        content: <DashboardComponent onMenuItemClick={handleMenuItemClick} />,
-      },
-      {
-        label: "Áreas",
-        content: <AreasManagementComponent />,
-      },
-      {
-        label: "Logos", 
-        content: <LogosComponent />
-      },
-      {
-        label: "Clasificaciones",
-        content: <ClasificationsComponent />,
-      },
-      {
-        label: "Productos",
-        content: <ProductsComponent />,
-      },
-      {
-        label: "Almacenes",
-        content: <StorageComponent />,
-      },
-      {
-        label: "Stock", 
-        content: <StockComponent />,
-      },
-      {
-        label: "Utilidades", 
-        content: <UtilitiesComponent />,
-      },
-      {
-        label: "Compras", 
-        content: <PurchasesComponent />,
-      }, 
-      {
-        label: "Ventas",
-        content: <SalesComponent />,
-      },
-      {
-        label: "Personal",
-        content: <EmployeeComponent />,
-      },
-      {
-        label: "Clientes",
-        content: <ClientsComponent />,
-      },
-      {
-        label: "Proveedores", 
-        content: <SuppliersComponent />,
-      },
-      {
-        label: "Emisores",
-        content: <EmittersComponent />,
-      },
-      {
-        label: "Usuarios del sistema",
-        content: <SystemUserComponent />,
-      },
-      {
-        label: "SEO",
-        content: <SeoComponent />,
-      },
-      {
-        label: "WhatsApp",
-        content: <WhatsAppComponent />,
-      },
-      {
-        label: "Estadísticas", 
-        content: <StatisticsComponent />,
-      },
-      {
-        label: "Cotizaciones",
-        content: <QuotesComponent />,
-      },
-      {
-        label: "Administrar empresas",
-        content: <EnterprisesManagementComponent />,
-      },
-      {
-        label: "Administrar sucursales",
-        content: (
-          <BranchesManagementComponent onMenuItemClick={handleMenuItemClick} />
-        ),
-      },
-    ],
-    [handleMenuItemClick]
-  );
+  const handleMenuItemClick = (moduleId: string) => {
+    const targetModule = ALL_MODULES[moduleId];
+    if (!targetModule) return;
 
-  // Inicializar la primera tab
+    const existingIndex = openTabs.findIndex((tab) => tab.id === moduleId);
+
+    if (existingIndex !== -1) {
+      setValue(existingIndex);
+    } else {
+      const newTab: OpenTab = {
+        id: moduleId,
+        label: targetModule.label,
+        content: targetModule.content,
+      };
+      setOpenTabs((prev) => [...prev, newTab]);
+      setValue(openTabs.length);
+    }
+  };
+
   useEffect(() => {
     if (openTabs.length === 0) {
-      setOpenTabs([allTabs[0]]);
+      const defaultModule = ALL_MODULES["dashboard"];
+      setOpenTabs([{ id: "dashboard", ...defaultModule }]);
     }
-  }, [allTabs]);
+  }, []);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  const handleCloseTab = (index: number) => {
-    const newTabs = openTabs.filter((_, i) => i !== index);
+  const handleCloseTab = (indexToClose: number) => {
+    const newTabs = openTabs.filter((_, i) => i !== indexToClose);
     setOpenTabs(newTabs);
-    setValue(Math.max(0, index - 1));
+
+    if (value >= newTabs.length) {
+      setValue(Math.max(0, newTabs.length - 1));
+    } else if (value === indexToClose) {
+      setValue(Math.max(0, indexToClose - 1));
+    }
   };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
       <DrawerComponent onMenuItemClick={handleMenuItemClick} />
-      <Box sx={{ 
-        display: "flex", 
-        flexDirection: "column", 
-        width: "100%",
-        overflow: "hidden", 
-      }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          overflow: "hidden",
+        }}
+      >
         <AppBar position="static" color="inherit" elevation={0}>
           <Tabs
             value={value}
@@ -192,70 +229,63 @@ export const MainContent = () => {
             variant="scrollable"
             scrollButtons="auto"
             textColor="inherit"
-            TabIndicatorProps={{
-              style: { 
-                display: "none",
-              },
-            }}
+            TabIndicatorProps={{ style: { display: "none" } }}
             sx={{
               maxWidth: "100%",
               "& .MuiTab-root": {
-                fontSize: "14px",
-                fontWeight: 400,
+                fontSize: "13px",
+                fontWeight: 500,
                 color: "#444",
                 textTransform: "none",
-                position: "relative",
-                border: "1px solid #e0e0e0",
+                borderRight: "1px solid #e0e0e0",
+                borderBottom: "1px solid #e0e0e0",
+                minHeight: "42px",
               },
               "& .Mui-selected": {
                 fontWeight: "bold",
-                color: "#FF5A5A",
-                backgroundColor: "#f1f1f1",
+                color: "#1976d2",
+                backgroundColor: "#f5f5f5",
               },
             }}
           >
             {openTabs.map((tab, index) => (
               <Tab
-                key={index}
+                key={tab.id}
                 sx={{
-                  "& .close-icon": {
-                    visibility: "hidden"
-                  },
-                  "&:hover": {
-                    backgroundColor: "#f0f0f0",
-                    "& .close-icon": {
-                      visibility: "visible"
-                    }
-                  }
+                  "& .close-icon": { visibility: "hidden" },
+                  "&:hover .close-icon": { visibility: "visible" },
                 }}
                 label={
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <span>{tab.label}</span>
-                    <div
+                    <Box
                       className="close-icon"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleCloseTab(index);
                       }}
-                      style={{ cursor: "pointer", marginLeft: 8 }}
+                      style={{ cursor: "pointer", marginLeft: 8, display: "flex" }}
                     >
-                      <CloseIcon sx={{ fontSize: 16 }} />
-                    </div>
+                      <CloseIcon sx={{ fontSize: 15 }} />
+                    </Box>
                   </Box>
                 }
               />
             ))}
           </Tabs>
         </AppBar>
+
         {openTabs.length > 0 ? (
           openTabs.map((tab, index) => (
-            <TabPanel key={index} value={value} index={index}>
+            <TabPanel key={tab.id} value={value} index={index}>
               {tab.content}
             </TabPanel>
           ))
         ) : (
-          <Box sx={{ padding: 3 }}>
-            <Typography>No hay ventanas abiertas</Typography>
+          <Box sx={{ padding: 4, textAlign: "center" }}>
+            <Typography variant="h6" color="text.secondary">
+              No hay ventanas abiertas
+            </Typography>
           </Box>
         )}
       </Box>

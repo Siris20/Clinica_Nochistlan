@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Divider,
@@ -11,181 +12,113 @@ import {
   IconButton,
   keyframes,
   ListItemButton,
-  Collapse,
   FormControl,
   Select,
   MenuItem,
+  Collapse,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import BusinessIcon from "@mui/icons-material/Business";
+
+// Iconos
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import FolderSharedIcon from "@mui/icons-material/FolderShared";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
+import HealingIcon from "@mui/icons-material/Healing";
+import SingleBedIcon from "@mui/icons-material/SingleBed";
+import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
+import BiotechIcon from "@mui/icons-material/Biotech";
+import MedicationIcon from "@mui/icons-material/Medication";
+import ContentCutIcon from "@mui/icons-material/ContentCut";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import WarehouseIcon from "@mui/icons-material/Warehouse";
 import PeopleIcon from "@mui/icons-material/People";
-import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import DescriptionIcon from "@mui/icons-material/Description";
-import "../../styles/Dashboard.css";
+import DomainIcon from "@mui/icons-material/Domain";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import {
-  AdminPanelSettings,
-  Badge,
-  Engineering,
-  ExpandLess,
-  ExpandMore,
-  PersonOutline,
-  Warehouse,
-  Inventory,
-  Assessment,
-  Apartment,
-  BusinessCenter,
-  BrandingWatermark,
-  SettingsCell,
-  SimCard,
-  ViewList,
-  ShowChart,
-  CallReceived,
-  CallMade,
-  SwapHoriz,
-  CompareArrows,
-  MonetizationOn,
-  Balance,
-  KeyboardReturn,
-  PriceCheck,
-} from "@mui/icons-material";
-import LogoutIcon from "@mui/icons-material/Logout";
-import { useEnterprises } from "../../hooks/Enterprises/useEnterprises";
-import { useBranches } from "../../hooks/Branches/useBranches";
 import { useEnterprise } from "../../context/EnterpriseContext";
 import { useBranch } from "../../context/BranchContext";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import "../../styles/Dashboard.css";
 
-//Opciones del menu lateral
-const menuItems = [{ text: "Dashboard", icon: <DashboardIcon />, tabIndex: 0 }];
-
-//Items de la empresa
-const enterpriseItems = [
-  { text: "Áreas", icon: <BusinessCenter />, tabIndex: 1 },
-  { text: "Logos", icon: <BrandingWatermark />, tabIndex: 2 },
-];
-
-//Items del apartado productos
-const productsSubItems = [
-  { text: "Clasificaciones", icon: <Apartment />, tabIndex: 3 },
-  { text: "Lista de Productos", icon: <ViewList />, tabIndex: 4 },
-];
-
-//Items del apartado Almacenes
-const subMenuItemsInventory = [
-  { text: "Almacenes", icon: <Warehouse />, tabIndex: 5 },
-];
-
-//Items del apartado Stock
-const stockItems = [{ text: "Stock", icon: <ShowChart />, tabIndex: 6 }];
-
-//Items del apartado Utilidades
-const utilitiesItems = [{ text: "Utilidades", icon: <PriceCheck />, tabIndex: 7}];
-
-//Items del apartado Compras
-const entryItems = [
-  { text: "Compras", icon: <MonetizationOn />, tabIndex: 8 },
-];
-
-//Items del apartado salidas
-const exitItems = [
-  { text: "Ventas", icon: <MonetizationOn />, tabIndex: 9 },
-];
-
-const peopleSubItems = [
-  { text: "Personal", icon: <Engineering />, tabIndex: 10 },
-  { text: "Clientes", icon: <PersonOutline />, tabIndex: 11 },
-  { text: "Proveedores", icon: <SettingsCell />, tabIndex: 12 },
-  { text: "Emisores", icon: <Badge />, tabIndex: 13 },
-  { text: "Usuarios del sistema", icon: <AdminPanelSettings />, tabIndex: 14 },
-];
-
-const toolItems = [
-  { text: "SEO", icon: <RocketLaunchIcon />, tabIndex: 15 },
-  { text: "WhatsApp", icon: <WhatsAppIcon />, tabIndex: 16 },
-  { text: "Estadísticas", icon: <AccountBalanceIcon />, tabIndex: 17 },
-  { text: "Cotizaciones", icon: <DescriptionIcon />, tabIndex: 18 },
+const menuCategories = [
+  {
+    title: null, // Ítem principal fuera de categoría colapsable
+    items: [{ id: "dashboard", text: "Inicio / Dashboard", icon: <DashboardIcon /> }],
+  },
+  {
+    title: "Atención Clínica",
+    items: [
+      { id: "pacientes", text: "Pacientes", icon: <FolderSharedIcon /> },
+      { id: "citas", text: "Citas y Recepción", icon: <CalendarMonthIcon /> },
+      { id: "atencion_medica", text: "Atención médica", icon: <MedicalServicesIcon /> },
+      { id: "enfermeria", text: "Enfermería", icon: <HealingIcon /> },
+      { id: "hospitalizacion", text: "Hospitalización", icon: <SingleBedIcon /> },
+      { id: "urgencias", text: "Urgencias", icon: <MonitorHeartIcon /> },
+      { id: "laboratorio", text: "Lab. e Imagenología", icon: <BiotechIcon /> },
+      { id: "quirofano", text: "Quirófano", icon: <ContentCutIcon /> },
+    ],
+  },
+  {
+    title: "Suministros y Logística",
+    items: [
+      { id: "farmacia", text: "Farmacia", icon: <MedicationIcon /> },
+      { id: "almacen", text: "Almacén y Compras", icon: <WarehouseIcon /> },
+    ],
+  },
+  {
+    title: "Administración y Gestión",
+    items: [
+      { id: "facturacion", text: "Caja y Facturación", icon: <ReceiptLongIcon /> },
+      { id: "personal", text: "Personal", icon: <PeopleIcon /> },
+      { id: "areas_medicas", text: "Áreas Médicas", icon: <DomainIcon /> },
+      { id: "reportes", text: "Reportes", icon: <AssessmentIcon /> },
+      { id: "configuracion", text: "Configuración", icon: <SettingsIcon /> },
+    ],
+  },
 ];
 
 const bounce = keyframes`
-  0%, 100% {
-    transform: translateY(0);
-    }
-  50% {
-    transform: translateY(-5px);
-    }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 `;
 
 export const DrawerComponent = ({ onMenuItemClick }) => {
-  //Hooks
-  const { selectedEnterprise, setSelectedEnterprise, enterprises } =
-    useEnterprise();
+  const { selectedEnterprise, setSelectedEnterprise, enterprises } = useEnterprise();
   const { selectedBranch, setSelectedBranch, branches } = useBranch();
 
-  //Estados
   const theme = useTheme();
   const navigate = useNavigate();
-  const { user, employeeData, isLoggedIn, logout } = useAuth();
+  const { employeeData, logout } = useAuth();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [enterpriseMenuOpen, setEnterpriseMenuOpen] = useState(false);
-  const [subMenuOpen, setSubMenuOpen] = useState(false);
-  const [peopleMenuOpen, setPeopleMenuOpen] = useState(false);
-  const [productsMenuOpen, setProductsMenuOpen] = useState(false);
-  const [movementsMenuOpen, setMovementsMenuOpen] = useState(false);
-  const [entryMovementsMenuOpen, setEntryMovementsMenuOpen] = useState(false);
-  const [transferMovementsMenuOpen, setTransferMovementsMenuOpen] = useState(false);
-  const [exitMovementsMenuOpen, setExitMovementsMenuOpen] = useState(false);
 
-  //Establacer balores iniviales
+  // Estado para controlar qué grupos están abiertos
+  const [openCategories, setOpenCategories] = useState({
+    "Atención Clínica": false,
+    "Suministros y Logística": false,
+    "Administración y Gestión": false,
+  });
+
   useEffect(() => {
     if (enterprises.length > 0 && !selectedEnterprise) {
-      const firstEnterprise = enterprises[0];
-      setSelectedEnterprise(firstEnterprise.id);
+      setSelectedEnterprise(enterprises[0].id);
     }
   }, [enterprises, selectedEnterprise]);
 
   useEffect(() => {
     if (branches.length > 0 && !selectedBranch) {
-      const firstBranch = branches[0];
-      setSelectedBranch(firstBranch.id);
+      setSelectedBranch(branches[0].id);
     }
   }, [branches, selectedBranch]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
-  };
-
-  const handleEnterpriseMenuOpen = () => {
-    setEnterpriseMenuOpen(!enterpriseMenuOpen);
-  };
-
-  const handleSubMenuOpen = () => {
-    setSubMenuOpen(!subMenuOpen);
-  };
-
-  const handleProductsMenuOpen = () => {
-    setProductsMenuOpen(!productsMenuOpen);
-  };
-
-  const handleMovementsMenuOpen = () => {
-    setMovementsMenuOpen(!movementsMenuOpen);
-  };
-
-  const handleEntryMovementsMenuOpen = () => {
-    setEntryMovementsMenuOpen(!entryMovementsMenuOpen);
-  };
-
-  const handleExitMovementsMenuOpen = () => {
-    setExitMovementsMenuOpen(!exitMovementsMenuOpen);
-  };
-
-  const handlePeopleMenuOpen = () => {
-    setPeopleMenuOpen(!peopleMenuOpen);
   };
 
   const handleLogout = () => {
@@ -196,529 +129,159 @@ export const DrawerComponent = ({ onMenuItemClick }) => {
   const handleEnterpriseChange = (event) => {
     const value = event.target.value;
     if (value === "admin") {
-      onMenuItemClick(19);
+      onMenuItemClick("empresas");
       return;
     }
     setSelectedEnterprise(value);
-    setSelectedBranch(null); // Resetear la sucursal seleccionada
+    setSelectedBranch(null);
   };
+
   const handleBranchChange = (event) => {
     const value = event.target.value;
     if (value === "admin") {
-      onMenuItemClick(20);
+      onMenuItemClick("sucursales");
       return;
     }
     setSelectedBranch(value);
   };
 
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return "https://avatar.iran.liara.run/public/28";
+  // Alternar apertura/cierre de la categoría
+  const handleToggleCategory = (title) => {
+    setOpenCategories((prev) => ({
+      ...prev,
+      [title]: !prev[title],
+    }));
+  };
 
-    if (imagePath.startsWith("data:")) {
-      return imagePath;
-    }
-
-    // Asegúrate de que las rutas usen forward slashes
-    const normalizedPath = imagePath.replace(/\\/g, "/");
-    return `${import.meta.env.VITE_API_SERVER}/${normalizedPath}`;
+  const handleItemClick = (id) => {
+    onMenuItemClick(id);
+    if (isSmallScreen) setMobileOpen(false);
   };
 
   const drawerContent = (
-    <Box
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "50px 0",
-          height: "70px",
-        }}
-      >
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      {/* Logotipo */}
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "20px 0", height: "70px" }}>
         <img
           src="/images/ClinicaNochistlan_logo.png"
-          alt="Dash/DrawerComponent"
-          title="Tadimex Logo"
-          className="drawer-logo"
-          style={{
-            width: "250px",
-            maxHeight: "100px",
-            objectFit: "contain",
-          }}
+          alt="Clínica Logo"
+          style={{ width: "200px", maxHeight: "70px", objectFit: "contain" }}
         />
       </Box>
-      {/* Sección fija del avatar */}
-      <Box className="avatar-section" sx={{ flexShrink: 0 }}>
-        <div>
-          <img
-            src={getImageUrl(employeeData?.image)}
-            alt="Avatar"
-            className="avatar-image"
-          />
-        </div>
-        <Typography
-          variant="body1"
-          sx={{ fontWeight: "bold", textAlign: "center" }}
-        >
+
+      {/* Información del Usuario */}
+      <Box className="avatar-section" sx={{ flexShrink: 0, px: 2, py: 1, textAlign: "center" }}>
+        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
           {employeeData?.name} {employeeData?.last_name}
         </Typography>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          {employeeData?.position}
+        <Typography variant="caption" sx={{ color: "text.secondary" }}>
+          {employeeData?.position || "Personal Hospitalario"}
         </Typography>
       </Box>
 
       <Divider sx={{ flexShrink: 0 }} />
 
-      {/* Seccion de seleccion de empresa */}
-      <Box sx={{ p: "0px 16px", flexShrink: 0, mt: 1 }}>
-        <Typography
-          variant="subtitle2"
-          sx={{
-            mb: 0.5,
-            fontWeight: "bold",
-            fontSize: "12px",
-            textAlign: "left",
-          }}
-        >
-          Empresa
-        </Typography>
-        <FormControl fullWidth size="small">
-          <Select
-            value={selectedEnterprise || ""}
-            onChange={handleEnterpriseChange}
-            displayEmpty
-            renderValue={() => {
-              if (enterprises.length === 0) {
-                return (
-                  <>
-                    <Typography variant="body2" sx={{ fontSize: "13px" }}>
-                      No existen empresas
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ fontSize: "11px" }}
-                    >
-                      Crea una empresa
-                    </Typography>
-                  </>
-                );
-              }
-
-              if (!selectedEnterprise) return "";
-
-              const enterprise = enterprises.find(
-                (e) => e.id === selectedEnterprise
-              );
-              return (
-                <Box>
-                  <Typography variant="body2" sx={{ fontSize: "13px" }}>
-                    {enterprise?.name || ""}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: "11px" }}
-                  >
-                    {enterprise?.estado || ""}
-                  </Typography>
-                </Box>
-              );
-            }}
-            sx={{
-              height: "2.813rem",
-              backgroundColor: "#fff",
-              "& .MuiSelect-select": {
-                py: 0.5,
-                fontSize: "13px",
-              },
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#e0e0e0",
-              },
-            }}
-          >
-            <MenuItem
-              value="admin"
-              sx={{
-                borderBottom: "1px solid #e0e0e0",
-                color: "primary.main",
-                fontWeight: "bold",
-              }}
-            >
-              <Box sx={{ py: 0.5 }}>
-                <Typography variant="body2" sx={{ fontSize: "13px" }}>
-                  Administrar Empresas
-                </Typography>
-              </Box>
-            </MenuItem>
-            {enterprises.map((enterprise) => (
-              <MenuItem key={enterprise.id} value={enterprise.id}>
-                <Box sx={{ py: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontSize: "13px" }}>
-                    {enterprise.name}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: "11px" }}
-                  >
-                    {enterprise.estado}
-                  </Typography>
-                </Box>
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-
-      {/* Seccion de seleccion de sucursal  */}
-
-      <Box sx={{ p: "0px 16px", flexShrink: 0, mt: 1 }}>
-        <Typography
-          variant="subtitle2"
-          sx={{
-            mb: 0.5,
-            fontWeight: "bold",
-            fontSize: "12px",
-            textAlign: "left",
-          }}
-        >
-          Sucursal
-        </Typography>
-        <FormControl fullWidth size="small">
-          <Select
-            value={selectedBranch || ""}
-            onChange={handleBranchChange}
-            displayEmpty
-            renderValue={() => {
-              if (branches.length === 0) {
-                return (
-                  <>
-                    <Typography variant="body2" sx={{ fontSize: "13px" }}>
-                      No existen sucursales
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ fontSize: "11px" }}
-                    >
-                      Crea una sucursal
-                    </Typography>
-                  </>
-                );
-              }
-
-              if (!selectedBranch) return "";
-
-              const branch = branches.find((b) => b.id === selectedBranch);
-              return (
-                <Box>
-                  <Typography variant="body2" sx={{ fontSize: "13px" }}>
-                    {branch?.name || ""}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: "11px" }}
-                  >
-                    {branch?.estado || ""}
-                  </Typography>
-                </Box>
-              );
-            }}
-            sx={{
-              height: "2.813rem",
-              backgroundColor: "#fff",
-              "& .MuiSelect-select": {
-                py: 0.5,
-                fontSize: "13px",
-              },
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#e0e0e0",
-              },
-            }}
-          >
-            <MenuItem
-              value="admin"
-              sx={{
-                borderBottom: "1px solid #e0e0e0",
-                color: "primary.main",
-                fontWeight: "bold",
-              }}
-            >
-              <Box sx={{ py: 0.5 }}>
-                <Typography variant="body2" sx={{ fontSize: "13px" }}>
-                  Administrar Sucursales
-                </Typography>
-              </Box>
-            </MenuItem>
-            {branches.map((branch) => (
-              <MenuItem key={branch.id} value={branch.id}>
-                <Box sx={{ py: 0.5 }}>
-                  <Typography variant="body2" sx={{ fontSize: "13px" }}>
-                    {branch.name}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: "11px" }}
-                  >
-                    {branch.estado}
-                  </Typography>
-                </Box>
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-
-      <Box
-        sx={{
-          flex: 1,
-          overflow: "auto",
-          "&::-webkit-scrollbar": {
-            width: "3px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "#f1f1f1",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "#888",
-            borderRadius: "3px",
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            background: "#555",
-          },
-        }}
-      >
-        {/* Menu List */}
-        <List>
-          {menuItems.map((item, index) => (
-            <ListItemButton
-              key={index}
-              onClick={() => onMenuItemClick(item.tabIndex)}
-              sx={{ cursor: "pointer" }}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          ))}
-
-          {/* Menu desplegable de Empresas */}
-          <ListItemButton onClick={handleEnterpriseMenuOpen}>
-            <ListItemIcon>
-              <BusinessIcon />
-            </ListItemIcon>
-            <ListItemText primary="Empresa" />
-            {enterpriseMenuOpen ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={enterpriseMenuOpen} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              {enterpriseItems.map((item, index) => (
-                <ListItemButton
-                  key={index}
-                  onClick={() => onMenuItemClick(item.tabIndex)}
-                  sx={{ pl: 4 }}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              ))}
-            </List>
-          </Collapse>
-
-          {/* Menu desplegable de Inventario */}
-          <ListItemButton onClick={handleSubMenuOpen}>
-            <ListItemIcon>
-              <Assessment />
-            </ListItemIcon>
-            <ListItemText primary="Inventario" />
-            {subMenuOpen ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={subMenuOpen} timeout="auto" unmountOnExit>
-            {/* Menú de Productos dentro de Inventario */}
-            <ListItemButton onClick={handleProductsMenuOpen} sx={{ pl: 4 }}>
-              <ListItemIcon>
-                <Inventory />
-              </ListItemIcon>
-              <ListItemText primary="Productos" />
-              {productsMenuOpen ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={productsMenuOpen} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                {productsSubItems.map((item, index) => (
+      {/* Menú Desplegable con Categorías Colapsables */}
+      <Box sx={{ flex: 1, overflow: "auto", px: 1, py: 1 }}>
+        {menuCategories.map((category, catIndex) => {
+          if (!category.title) {
+            return (
+              <List key={catIndex} disablePadding sx={{ mb: 1 }}>
+                {category.items.map((item) => (
                   <ListItemButton
-                    key={index}
-                    onClick={() => onMenuItemClick(item.tabIndex)}
-                    sx={{ pl: 8 }} // Más indentación para submenú anidado
+                    key={item.id}
+                    onClick={() => handleItemClick(item.id)}
+                    sx={{
+                      borderRadius: "6px",
+                      mb: "2px",
+                      py: 0.8,
+                      "&:hover": { backgroundColor: "action.hover" },
+                    }}
                   >
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.text} />
+                    <ListItemIcon sx={{ minWidth: 34, color: "action.active" }}>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.text}
+                      primaryTypographyProps={{ fontSize: "0.83rem", fontWeight: 500 }}
+                    />
                   </ListItemButton>
                 ))}
               </List>
-            </Collapse>
-            {/* Almacen */}
-            <List component="div" disablePadding>
-              {subMenuItemsInventory.map((item, index) => (
-                <ListItemButton
-                  key={index}
-                  onClick={() => onMenuItemClick(item.tabIndex)}
-                  sx={{ pl: 4 }}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              ))}
-            </List>
-            {/* Stock */}
-            <List component="div" disablePadding>
-              {stockItems.map((item, index) => (
-                <ListItemButton
-                  key={index}
-                  onClick={() => onMenuItemClick(item.tabIndex)}
-                  sx={{ pl: 4 }}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              ))}
-            </List>
+            );
+          }
 
-            {/* Utilidades */}
-            <List component="div" disablePadding>
-              {utilitiesItems.map((item, index) => (
-                <ListItemButton
-                  key={index}
-                  onClick={() => onMenuItemClick(item.tabIndex)}
-                  sx={{ pl: 4 }}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              ))}
-            </List>
+          const isOpen = !!openCategories[category.title];
 
-            {/* Menú de movimientos dentro de Inventario */}
-            <ListItemButton onClick={handleMovementsMenuOpen} sx={{ pl: 4 }}>
-              <ListItemIcon>
-                <CompareArrows />
-              </ListItemIcon>
-              <ListItemText primary="Movimientos" />
-              {movementsMenuOpen ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={movementsMenuOpen} timeout="auto" unmountOnExit>
-              {/* Submenú de Entradas dentro de Movimientos */}
-              <ListItemButton onClick={handleEntryMovementsMenuOpen} sx={{ pl: 6 }}>
-                <ListItemIcon>
-                  <CallReceived />
-                </ListItemIcon>
-                <ListItemText primary="Entradas" />
-                {entryMovementsMenuOpen ? <ExpandLess /> : <ExpandMore />}
+          return (
+            <Box key={catIndex} sx={{ mb: 0.5 }}>
+              {/* Encabezado Desplegable */}
+              <ListItemButton
+                onClick={() => handleToggleCategory(category.title)}
+                sx={{
+                  borderRadius: "6px",
+                  py: 0.6,
+                  px: 1.5,
+                  backgroundColor: isOpen ? "rgba(0, 0, 0, 0.02)" : "transparent",
+                  "&:hover": { backgroundColor: "action.hover" },
+                }}
+              >
+                <ListItemText
+                  primary={category.title}
+                  primaryTypographyProps={{
+                    fontSize: "0.72rem",
+                    fontWeight: "bold",
+                    color: "text.secondary",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                  }}
+                />
+                {isOpen ? (
+                  <ExpandLess sx={{ fontSize: 18, color: "text.secondary" }} />
+                ) : (
+                  <ExpandMore sx={{ fontSize: 18, color: "text.secondary" }} />
+                )}
               </ListItemButton>
-              <Collapse in={entryMovementsMenuOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {entryItems.map((item, index) => (
+
+              {/* Items dentro del Menú Desplegable */}
+              <Collapse in={isOpen} timeout="auto" unmountOnExit={false}>
+                <List disablePadding sx={{ pl: 1 }}>
+                  {category.items.map((item) => (
                     <ListItemButton
-                      key={index}
-                      onClick={() => onMenuItemClick(item.tabIndex)}
-                      sx={{ pl: 12 }} // Más indentación para submenú anidado
+                      key={item.id}
+                      onClick={() => handleItemClick(item.id)}
+                      sx={{
+                        borderRadius: "6px",
+                        mb: "2px",
+                        py: 0.6,
+                        "&:hover": { backgroundColor: "action.hover" },
+                      }}
                     >
-                      <ListItemIcon>{item.icon}</ListItemIcon>
-                      <ListItemText primary={item.text} />
+                      <ListItemIcon sx={{ minWidth: 32, color: "action.active" }}>
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={item.text}
+                        primaryTypographyProps={{ fontSize: "0.82rem" }}
+                      />
                     </ListItemButton>
                   ))}
                 </List>
               </Collapse>
-
-              {/* Submenú de Salidas dentro de Movimientos */}
-              <ListItemButton onClick={handleExitMovementsMenuOpen} sx={{ pl: 6 }}>
-                <ListItemIcon>
-                  <CallMade />
-                </ListItemIcon>
-                <ListItemText primary="Salidas" />
-                {exitMovementsMenuOpen ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-              <Collapse in={exitMovementsMenuOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {exitItems.map((item, index) => (
-                    <ListItemButton
-                      key={index}
-                      onClick={() => onMenuItemClick(item.tabIndex)}
-                      sx={{ pl: 12 }} // Más indentación para submenú anidado
-                    >
-                      <ListItemIcon>{item.icon}</ListItemIcon>
-                      <ListItemText primary={item.text} />
-                    </ListItemButton>
-                  ))}
-                </List>
-              </Collapse>
-            </Collapse>
-          </Collapse>
-
-          {/* Menu desplegable de Personas */}
-          <ListItemButton onClick={handlePeopleMenuOpen}>
-            <ListItemIcon>
-              <PeopleIcon />
-            </ListItemIcon>
-            <ListItemText primary="Personas" />
-            {peopleMenuOpen ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={peopleMenuOpen} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              {peopleSubItems.map((item, index) => (
-                <ListItemButton
-                  key={index}
-                  onClick={() => onMenuItemClick(item.tabIndex)}
-                  sx={{ pl: 4 }}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              ))}
-            </List>
-          </Collapse>
-        </List>
-
-        {/* Tools Section */}
-        <Typography
-          variant="subtitle2"
-          sx={{ pl: 2, mt: 2, mb: 1, fontWeight: "bold", textAlign: "left" }}
-        >
-          Herramientas
-        </Typography>
-        <List>
-          {toolItems.map((item, index) => (
-            <ListItemButton
-              key={index}
-              onClick={() => onMenuItemClick(item.tabIndex)}
-              sx={{ cursor: "pointer" }}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          ))}
-        </List>
+            </Box>
+          );
+        })}
       </Box>
 
-      {/* Botón de cerrar sesión (fijo al fondo) */}
-      <Box sx={{ flexShrink: 0 }}>
-        <ListItemButton
-          onClick={handleLogout}
-          sx={{
-            "&:hover svg": { color: "red" },
-          }}
-        >
-          <ListItemIcon>
+      <Divider sx={{ flexShrink: 0 }} />
+
+      {/* Cierre de Sesión */}
+      <Box sx={{ flexShrink: 0, p: 1 }}>
+        <ListItemButton onClick={handleLogout} sx={{ borderRadius: "6px", "&:hover svg": { color: "red" } }}>
+          <ListItemIcon sx={{ minWidth: 34 }}>
             <LogoutIcon />
           </ListItemIcon>
-          <ListItemText primary="Cerrar Sesion" />
+          <ListItemText primary="Cerrar Sesión" primaryTypographyProps={{ fontSize: "0.83rem" }} />
         </ListItemButton>
       </Box>
     </Box>
@@ -757,7 +320,6 @@ export const DrawerComponent = ({ onMenuItemClick }) => {
           "& .MuiDrawer-paper": {
             width: 256,
             boxSizing: "border-box",
-            marginTop: 0,
             backgroundColor: "#FFFFFF",
             height: "100%",
           },
