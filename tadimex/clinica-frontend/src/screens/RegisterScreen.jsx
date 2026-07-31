@@ -41,7 +41,7 @@ export const RegisterScreen = () => {
                 }}
               >
                 <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                  <img src="images/" alt="Logo Tadimex" style={{ width: '150px', marginBottom: 20 }} />
+                  <img src="images/" alt="/images/ClinicaNochistlan_logo.png" style={{ width: '150px', marginBottom: 20 }} />
                 </Box>
 
                 <Typography component="h1" variant="h5" sx={{ textAlign: 'center', mb: 4 }}>

@@ -12,7 +12,7 @@ import { BranchesManagementComponent } from "./BranchesManagement/BranchesManage
 import { EnterprisesManagementComponent } from "./Enterprises/EnterprisesManagementComponent";
 import { ProductsComponent } from "./Products/ProductsComponent";
 import { AreasManagementComponent } from "./Areas/AreasManagementComponent";
-import { ClientsComponent } from "./Clients/ClientsComponent";
+import { PatientsComponent } from "./Patients/PatientsComponent";
 import { QuotesComponent } from "./Quotes/QuotesComponent";
 import { StatisticsComponent } from "./Statistics/StatisticsComponent";
 import { PurchasesComponent, SalesComponent } from "./Movements";
@@ -76,7 +76,7 @@ export const MainContent = () => {
     },
     pacientes: {
       label: "Pacientes",
-      content: <ClientsComponent />,
+      content: <PatientsComponent />,
     },
     citas: {
       label: "Citas y Recepción",
