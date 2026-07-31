@@ -1,0 +1,1 @@
+// Apartado a implementar en caso de que se pudieran tener una lista de especialistas sin areas asignadas 

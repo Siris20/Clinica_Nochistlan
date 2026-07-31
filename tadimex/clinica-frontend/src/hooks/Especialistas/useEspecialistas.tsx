@@ -25,9 +25,7 @@ export const useEspecialistas = (areaId: number | string | null) => {
     setError(null);
     try {
       const response = await fetch(`/api/v1/especialistas?area_id=${areaId}`);
-      if (!response.ok) {
-        throw new Error("Error al obtener los especialistas del área");
-      }
+      if (!response.ok) throw new Error("Error al obtener los especialistas del área");
       const data: Especialista[] = await response.json();
       setEspecialistas(data);
     } catch (err: any) {
@@ -42,5 +40,42 @@ export const useEspecialistas = (areaId: number | string | null) => {
     fetchEspecialistas();
   }, [fetchEspecialistas]);
 
-  return { especialistas, loading, error, refetchEspecialistas: fetchEspecialistas };
+  // Funciones CRUD que refrescan automáticamente la lista local tras responder el servidor
+  const createEspecialista = async (data: Omit<Especialista, "id">) => {
+    const res = await fetch("/api/v1/especialistas", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("No se pudo crear el especialista");
+    await fetchEspecialistas();
+  };
+
+  const updateEspecialista = async (id: number, data: Partial<Especialista>) => {
+    const res = await fetch(`/api/v1/especialistas/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("No se pudo actualizar el especialista");
+    await fetchEspecialistas();
+  };
+
+  const deleteEspecialista = async (id: number) => {
+    const res = await fetch(`/api/v1/especialistas/${id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error("No se pudo eliminar el especialista");
+    await fetchEspecialistas();
+  };
+
+  return {
+    especialistas,
+    loading,
+    error,
+    refetchEspecialistas: fetchEspecialistas,
+    createEspecialista,
+    updateEspecialista,
+    deleteEspecialista,
+  };
 };
