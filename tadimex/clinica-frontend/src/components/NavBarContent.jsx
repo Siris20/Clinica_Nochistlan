@@ -64,26 +64,8 @@ export const NavBarContent = () => {
         </span>
       </div>
 
-      {/* Grupo 2: Redes Sociales + Botón (Se alinean totalmente a la derecha) */}
+      {/* Grupo 2: Inicio de sesion*/}
       <div className="header-actions-group">
-        <div className="social-links">
-          <a
-            href="https://www.facebook.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="social-icon-link"
-          >
-            <FacebookIcon fontSize="small" />
-          </a>
-          <a
-            href="https://www.linkedin.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="social-icon-link"
-          >
-            <LinkedInIcon fontSize="small" />
-          </a>
-        </div>
 
         <NavLink to="/login" style={{ textDecoration: "none" }}>
           <Button

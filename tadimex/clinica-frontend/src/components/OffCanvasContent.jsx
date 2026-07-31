@@ -83,26 +83,6 @@ export const OffCanvasContent = () => {
             </span>
           </div> */}
 
-          {/* Redes Sociales con clase e iconos adaptados */}
-          <div className="list-group-item d-flex align-items-center social-links">
-            <a
-              href="https://www.facebook.com/tadimex.mx"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="social-icon-link"
-            >
-              <FacebookIcon fontSize="small" />
-            </a>
-            <a
-              href="https://www.linkedin.com/tadimex.mx/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="social-icon-link"
-            >
-              <LinkedInIcon fontSize="small" />
-            </a>
-          </div>
-
           {/* Botón Iniciar Sesión con estilo idéntico al Navbar */}
           <div className="list-group-item d-flex align-items-center">
             <NavLink to="/login" style={{ textDecoration: "none", width: "100%" }}>

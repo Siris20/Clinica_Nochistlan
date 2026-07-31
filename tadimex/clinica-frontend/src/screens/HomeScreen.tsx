@@ -25,7 +25,7 @@ function HomeScreen() {
       <div className="background-container" style={{ position: 'relative' }}>
         <img
           src="images/ClinicaNochistlan_Banner.png"
-          alt="Tadimex"
+          alt="Clinica"
           className="banner d-block w-100"
         />
         
@@ -44,26 +44,30 @@ function HomeScreen() {
             zIndex: 10
           }}
         >
+        <span 
+          style={{
+            fontSize: '12px',
+            fontWeight: '500',
+            color: '#333',
+            marginRight: '8px',
+            whiteSpace: 'nowrap',
+            display: 'inline-flex',
+            alignItems: 'baseline',
+            gap: '4px' 
+          }}
+        >
+          Desarrollada por
           <span 
             style={{
-              fontSize: '12px',
-              fontWeight: '600',
-              color: '#333',
-              marginRight: '8px',
-              whiteSpace: 'nowrap'
+              fontSize: '14px',     
+              fontWeight: 'bold',   
+              color: '#002060',    
+              letterSpacing: '0.5px' 
             }}
           >
-            Desarrollada por
+            Tadimex
           </span>
-          <img
-            src="images/fenmex_hr.webp"
-            alt="Fenmex"
-            style={{
-              height: '24px',
-              width: 'auto',
-              objectFit: 'contain'
-            }}
-          />
+        </span>
         </div>
       </div>
 
